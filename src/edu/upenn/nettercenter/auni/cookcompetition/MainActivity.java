@@ -8,17 +8,12 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EActivity;
 
-import edu.upenn.nettercenter.auni.cookcompetition.sections.ManagementFragment;
+import edu.upenn.nettercenter.auni.cookcompetition.sections.*;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends Activity implements ActionBar.TabListener {
@@ -26,8 +21,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	private static Map<String, Class<?>> sections = new LinkedHashMap<String, Class<?>>();
 	
 	static {
-//		sections.put("Event", EventFragment.class);
-		sections.put("Management", ManagementFragment.class);
+		sections.put("Event", EventFragment_.class);
+		sections.put("Management", ManagementFragment_.class);
 	}
 
 	@AfterViews
