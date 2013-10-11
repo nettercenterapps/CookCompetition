@@ -1,5 +1,12 @@
 package edu.upenn.nettercenter.auni.cookcompetition.sections;
 
+import java.sql.SQLException;
+
+import com.googlecode.androidannotations.annotations.EFragment;
+import com.googlecode.androidannotations.annotations.OrmLiteDao;
+import com.j256.ormlite.dao.Dao;
+
+import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.R;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
 import android.os.Bundle;
@@ -14,7 +21,12 @@ import android.widget.TextView;
  * either contained in a {@link StudentListActivity} in two-pane mode (on
  * tablets) or a {@link StudentDetailActivity} on handsets.
  */
+@EFragment
 public class ManagementStudentDetailFragment extends Fragment {
+	
+	@OrmLiteDao(helper = DatabaseHelper.class, model = Student.class)
+	Dao<Student, Long> dao = null;
+
 	/**
 	 * The fragment argument representing the item ID that this fragment
 	 * represents.
@@ -38,11 +50,11 @@ public class ManagementStudentDetailFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 
 		if (getArguments().containsKey(ARG_ITEM_ID)) {
-			// Load the dummy content specified by the fragment
-			// arguments. In a real-world scenario, use a Loader
-			// to load content from a content provider.
-			mItem = Student.ITEM_MAP.get(getArguments().getString(
-					ARG_ITEM_ID));
+			try {
+				mItem = dao.queryForId(getArguments().getLong(ARG_ITEM_ID));
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} 
 		}
 	}
 
@@ -52,10 +64,9 @@ public class ManagementStudentDetailFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_student_detail,
 				container, false);
 
-		// Show the dummy content as text in a TextView.
 		if (mItem != null) {
-			((TextView) rootView.findViewById(R.id.student_detail))
-					.setText(mItem.content);
+			((TextView) rootView.findViewById(R.id.student_name))
+					.setText(mItem.getName());
 		}
 
 		return rootView;

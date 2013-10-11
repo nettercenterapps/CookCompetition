@@ -2,9 +2,10 @@ package edu.upenn.nettercenter.auni.cookcompetition.sections;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+
+import com.googlecode.androidannotations.annotations.EFragment;
+
 import edu.upenn.nettercenter.auni.cookcompetition.R;
 
 /**
@@ -21,20 +22,12 @@ import edu.upenn.nettercenter.auni.cookcompetition.R;
  * {@link ManagementStudentListFragment.Callbacks} interface to listen for item
  * selections.
  */
+@EFragment(R.layout.activity_student_twopane)
 public class ManagementFragment extends Fragment implements ManagementStudentListFragment.Callbacks {
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.activity_student_twopane,
-				container, false);
-
-		return rootView;
-	}
-	
+		
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
-		ManagementStudentListFragment f = new ManagementStudentListFragment();
+		ManagementStudentListFragment f = new ManagementStudentListFragment_();
 		getChildFragmentManager().beginTransaction()
 			.replace(R.id.student_list_container, f)
 			.commit();
@@ -46,13 +39,12 @@ public class ManagementFragment extends Fragment implements ManagementStudentLis
 	 * that the item with the given ID was selected.
 	 */
 	@Override
-	public void onItemSelected(String id) {
+	public void onItemSelected(Long id) {
 		Bundle arguments = new Bundle();
-		arguments.putString(ManagementStudentDetailFragment.ARG_ITEM_ID, id);
-		ManagementStudentDetailFragment fragment = new ManagementStudentDetailFragment();
+		arguments.putLong(ManagementStudentDetailFragment_.ARG_ITEM_ID, id);
+		Fragment fragment = new ManagementStudentDetailFragment_();
 		fragment.setArguments(arguments);
 		getChildFragmentManager().beginTransaction()
 				.replace(R.id.student_detail_container, fragment).commit();
-
 	}
 }

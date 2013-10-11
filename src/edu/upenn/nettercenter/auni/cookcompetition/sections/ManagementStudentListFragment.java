@@ -1,16 +1,30 @@
 package edu.upenn.nettercenter.auni.cookcompetition.sections;
 
+import java.sql.SQLException;
+import java.util.List;
+
 import android.app.ListFragment;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.googlecode.androidannotations.annotations.EFragment;
+import com.googlecode.androidannotations.annotations.OrmLiteDao;
+import com.j256.ormlite.dao.Dao;
+
+import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
 
+@EFragment
 public class ManagementStudentListFragment extends ListFragment {
 
-	private Callbacks mCallbacks = sDummyCallbacks;
+	@OrmLiteDao(helper = DatabaseHelper.class, model = Student.class)
+	Dao<Student, Long> dao;
 
+	private Callbacks mCallbacks = sDummyCallbacks;
+	private List<Student> students;
+	
 	/**
 	 * A callback interface that all activities containing this fragment must
 	 * implement. This mechanism allows activities to be notified of item
@@ -20,7 +34,7 @@ public class ManagementStudentListFragment extends ListFragment {
 		/**
 		 * Callback for when an item has been selected.
 		 */
-		public void onItemSelected(String id);
+		public void onItemSelected(Long id);
 	}
 
 	/**
@@ -29,7 +43,7 @@ public class ManagementStudentListFragment extends ListFragment {
 	 */
 	private static Callbacks sDummyCallbacks = new Callbacks() {
 		@Override
-		public void onItemSelected(String id) {
+		public void onItemSelected(Long id) {
 		}
 	};
 
@@ -39,22 +53,13 @@ public class ManagementStudentListFragment extends ListFragment {
 	 */
 	public ManagementStudentListFragment() {
 	}
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		// TODO: replace with a real list adapter.
-		setListAdapter(new ArrayAdapter<Student>(getActivity(),
-				android.R.layout.simple_list_item_activated_1,
-				android.R.id.text1, Student.ITEMS));
-	}
-
+	
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		
 		setActivateOnItemClick(true);
+		refreshList();
 	}
 	
 	public void setCallbacks(Callbacks callbacks) {
@@ -66,9 +71,7 @@ public class ManagementStudentListFragment extends ListFragment {
 			long id) {
 		super.onListItemClick(listView, view, position, id);
 
-		// Notify the active callbacks interface (the activity, if the
-		// fragment is attached to one) that an item has been selected.
-		mCallbacks.onItemSelected(Student.ITEMS.get(position).id);
+		mCallbacks.onItemSelected(students.get(position).getId());
 	}
 
 	/**
@@ -81,5 +84,20 @@ public class ManagementStudentListFragment extends ListFragment {
 		getListView().setChoiceMode(
 				activateOnItemClick ? ListView.CHOICE_MODE_SINGLE
 						: ListView.CHOICE_MODE_NONE);
+	}
+	
+	private void refreshList() {
+		try {
+			students = getStudents();
+			setListAdapter(new ArrayAdapter<Student>(getActivity(),
+					android.R.layout.simple_list_item_activated_1,
+					android.R.id.text1, students));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private List<Student> getStudents() throws SQLException {		
+		return dao.queryForAll();
 	}
 }
