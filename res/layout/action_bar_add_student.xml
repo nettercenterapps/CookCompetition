@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:id="@+id/menu_add_student_done"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:divider="#FFFFFF"
+        android:showDividers="end"
+        android:dividerPadding="12dip"
+        android:orientation="horizontal"
+        android:focusable="true"
+        android:clickable="true">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:duplicateParentState="true"
+            style="?android:attr/actionButtonStyle">
+
+            <ImageView
+                android:id="@+id/icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="8dip"
+                android:layout_marginEnd="8dip"
+                android:src="@drawable/ic_action_tick"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="20dip"
+                android:layout_marginEnd="20dip"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/white"
+                android:text="Done"
+                style="@android:style/Widget.Holo.ActionBar.TabText" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+  
+</LinearLayout>

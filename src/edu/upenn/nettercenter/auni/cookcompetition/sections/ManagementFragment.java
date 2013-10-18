@@ -1,10 +1,12 @@
 package edu.upenn.nettercenter.auni.cookcompetition.sections;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
 import com.googlecode.androidannotations.annotations.EFragment;
+import com.googlecode.androidannotations.annotations.OptionsItem;
 import com.googlecode.androidannotations.annotations.OptionsMenu;
 
 import edu.upenn.nettercenter.auni.cookcompetition.R;
@@ -49,5 +51,11 @@ public class ManagementFragment extends Fragment implements ManagementStudentLis
 		fragment.setArguments(arguments);
 		getChildFragmentManager().beginTransaction()
 				.replace(R.id.student_detail_container, fragment).commit();
+	}
+	
+	@OptionsItem(R.id.menu_student_add)
+	public void addStudent() {
+		Intent i = new Intent(getActivity(), ManagementAddStudentActivity_.class);
+		startActivity(i);
 	}
 }
