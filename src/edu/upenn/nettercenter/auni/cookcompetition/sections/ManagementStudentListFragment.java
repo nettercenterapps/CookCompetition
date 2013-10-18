@@ -86,7 +86,7 @@ public class ManagementStudentListFragment extends ListFragment {
 						: ListView.CHOICE_MODE_NONE);
 	}
 	
-	private void refreshList() {
+	public void refreshList() {
 		try {
 			students = getStudents();
 			setListAdapter(new ArrayAdapter<Student>(getActivity(),

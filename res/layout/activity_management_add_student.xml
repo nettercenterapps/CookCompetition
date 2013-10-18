@@ -25,8 +25,6 @@
             android:paddingTop="15dip"
             android:paddingBottom="15dip"
             android:inputType="textPersonName|textCapWords" >
-
-            <requestFocus />
         </EditText>
 
         <!-- TODO: change the color to the theme color -->
