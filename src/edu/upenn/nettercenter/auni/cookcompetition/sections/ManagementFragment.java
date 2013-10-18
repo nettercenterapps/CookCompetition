@@ -34,7 +34,7 @@ import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
  * {@link ManagementStudentListFragment.Callbacks} interface to listen for item
  * selections.
  */
-@EFragment(R.layout.activity_student_twopane)
+@EFragment(R.layout.twopane)
 @OptionsMenu(R.menu.management)
 public class ManagementFragment extends Fragment implements ManagementStudentListFragment.Callbacks {
 	
@@ -49,7 +49,7 @@ public class ManagementFragment extends Fragment implements ManagementStudentLis
 	void loadFragments() {
 		studentListFragment = new ManagementStudentListFragment_();
 		getChildFragmentManager().beginTransaction()
-			.replace(R.id.student_list_container, studentListFragment)
+			.replace(R.id.list_container, studentListFragment)
 			.commit();
 		studentListFragment.setCallbacks(this);
 		setHasOptionsMenu(true);
@@ -68,7 +68,7 @@ public class ManagementFragment extends Fragment implements ManagementStudentLis
 		Fragment fragment = new ManagementStudentDetailFragment_();
 		fragment.setArguments(arguments);
 		getChildFragmentManager().beginTransaction()
-				.replace(R.id.student_detail_container, fragment).commit();
+				.replace(R.id.detail_container, fragment).commit();
 	}
 	
 	@OptionsItem(R.id.menu_student_add)
