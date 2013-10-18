@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.googlecode.androidannotations.annotations.EFragment;
+import com.googlecode.androidannotations.annotations.OptionsMenu;
 
 import edu.upenn.nettercenter.auni.cookcompetition.R;
 
@@ -23,6 +24,7 @@ import edu.upenn.nettercenter.auni.cookcompetition.R;
  * selections.
  */
 @EFragment(R.layout.activity_student_twopane)
+@OptionsMenu(R.menu.management)
 public class ManagementFragment extends Fragment implements ManagementStudentListFragment.Callbacks {
 		
 	@Override
@@ -32,6 +34,7 @@ public class ManagementFragment extends Fragment implements ManagementStudentLis
 			.replace(R.id.student_list_container, f)
 			.commit();
 		f.setCallbacks(this);
+		setHasOptionsMenu(true);
 	}
 
 	/**

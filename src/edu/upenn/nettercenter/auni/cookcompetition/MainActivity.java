@@ -39,12 +39,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_main, menu);
-		return true;
-	}
-
-	@Override
 	public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {		
 		try {
 			Fragment fragment = (Fragment) sections.get(tab.getText()).newInstance();

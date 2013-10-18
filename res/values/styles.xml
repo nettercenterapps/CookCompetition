@@ -1,10 +1,17 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="AppTheme" parent="android:Theme.Holo.Light" />
+    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+		<item name="android:actionBarStyle">@style/NoTitleActionBarStyle</item>
+    </style>
 
     <style name="StudentName">
         <item name="android:textColor">#000000</item>
         <item name="android:textSize">42sp</item>
+        <item name="android:typeface">serif</item>
+    </style>
+    
+    <style name="NoTitleActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:displayOptions">useLogo|showHome</item>
     </style>
 
 </resources>
