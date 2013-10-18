@@ -23,6 +23,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	static {
 		sections.put("Event", EventFragment_.class);
 		sections.put("Management", ManagementFragment_.class);
+		sections.put("Team", TeamFragment_.class);
 	}
 
 	@AfterViews

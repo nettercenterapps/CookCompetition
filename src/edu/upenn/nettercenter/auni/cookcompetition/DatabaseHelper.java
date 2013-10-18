@@ -14,6 +14,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
+import edu.upenn.nettercenter.auni.cookcompetition.models.Team;
 
 /**
  * Database helper class used to manage the creation and upgrading of your database. This class also usually provides
@@ -37,6 +38,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		try {
 			Log.i(DatabaseHelper.class.getName(), "onCreate");
 			TableUtils.createTable(connectionSource, Student.class);
+			TableUtils.createTable(connectionSource, Team.class);
 		} catch (SQLException e) {
 			Log.e(DatabaseHelper.class.getName(), "Can't create database", e);
 			throw new RuntimeException(e);

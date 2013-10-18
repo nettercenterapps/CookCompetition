@@ -23,6 +23,9 @@
 		<activity
 			android:name=".sections.ManagementAddStudentActivity_">
 		</activity>
+		<activity
+			android:name=".sections.TeamAddTeamActivity_">
+		</activity>
 		
 	</application>
 

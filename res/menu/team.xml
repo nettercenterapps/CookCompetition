@@ -1,0 +1,21 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menu_team_add_student"
+        android:title="Add Student"
+        android:orderInCategory="1"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_user"/>
+    <item android:id="@+id/menu_team_add"
+        android:title="Add"
+        android:orderInCategory="1"
+        android:showAsAction="ifRoom"
+        android:icon="@android:drawable/ic_menu_add"/>
+    <item android:id="@+id/menu_team_edit"
+        android:title="Edit"
+        android:orderInCategory="1"
+        android:showAsAction="ifRoom"
+        android:icon="@android:drawable/ic_menu_edit"/>
+    <item android:id="@+id/menu_team_delete"
+        android:title="@string/menu_student_delete"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+</menu>
