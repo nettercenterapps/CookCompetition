@@ -13,7 +13,9 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EActivity;
@@ -46,7 +48,9 @@ public class ManagementAddStudentActivity extends Activity {
 	@ViewById
 	ViewGroup studentEditor;
 	
-		
+	@ViewById
+	Switch isActive;
+			
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
@@ -90,6 +94,8 @@ public class ManagementAddStudentActivity extends Activity {
 		try {
 			Student student = dao.queryForId(studentId);
 			studentName.setText(student.getName());
+			studentNickname.setText(student.getNickname());
+			isActive.setChecked(student.isActive());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -142,7 +148,8 @@ public class ManagementAddStudentActivity extends Activity {
 				student = dao.queryForId(studentId);
 			}
 			student.setName(studentName.getText().toString().trim());
-			student.setActive(true);	
+			student.setNickname(studentNickname.getText().toString().trim());
+			student.setActive(isActive.isChecked());	
 			dao.createOrUpdate(student);
 			
 			String message;
