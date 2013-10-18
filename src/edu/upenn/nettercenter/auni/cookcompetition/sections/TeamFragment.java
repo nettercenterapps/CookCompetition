@@ -1,6 +1,8 @@
 package edu.upenn.nettercenter.auni.cookcompetition.sections;
 
 import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -42,7 +44,11 @@ public class TeamFragment extends Fragment implements TeamListFragment.Callbacks
 	@OrmLiteDao(helper = DatabaseHelper.class, model = Team.class)
 	Dao<Team, Long> dao;
 	
+	@OrmLiteDao(helper = DatabaseHelper.class, model = Student.class)
+	Dao<Student, Long> studentDao;
+	
 	TeamListFragment listFragment;
+	TeamDetailFragment detailFragment;
 	
 	Long selectedItemId;
 	
@@ -66,10 +72,50 @@ public class TeamFragment extends Fragment implements TeamListFragment.Callbacks
 		
 		Bundle arguments = new Bundle();
 		arguments.putLong(TeamDetailFragment_.ARG_ITEM_ID, id);
-		Fragment fragment = new TeamDetailFragment_();
-		fragment.setArguments(arguments);
+		detailFragment = new TeamDetailFragment_();
+		detailFragment.setArguments(arguments);
 		getChildFragmentManager().beginTransaction()
-				.replace(R.id.detail_container, fragment).commit();
+				.replace(R.id.detail_container, detailFragment).commit();
+	}
+	
+	@OptionsItem(R.id.menu_team_add_student)
+	void showStudentChooserDialog() {
+		if (selectedItemId == null) return;
+		
+		try {
+			final List<Student> students = studentDao.queryBuilder().where().isNull("team_id").query();
+			String[] names = new String[students.size()];
+			for (int i = 0; i < names.length; i++) {
+				names[i] = students.get(i).getName();
+			}
+			
+			new AlertDialog.Builder(getActivity())
+		        .setTitle("")
+		        .setItems(names, new DialogInterface.OnClickListener() {
+		            public void onClick(DialogInterface dialog, int which) {
+		            	addStudentToCurrentTeam(students.get(which));
+		            }
+		        })
+		        .show();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	void addStudentToCurrentTeam(Student student) {
+		try {
+			Team team = dao.queryForId(selectedItemId);
+			student.setTeam(team);
+			studentDao.update(student);
+			
+			if (detailFragment != null) {
+				detailFragment.reloadStudents();
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	@OptionsItem(R.id.menu_team_add)

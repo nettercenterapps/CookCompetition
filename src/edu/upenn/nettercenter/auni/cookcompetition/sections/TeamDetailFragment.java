@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EFragment;
 import com.googlecode.androidannotations.annotations.OrmLiteDao;
 import com.googlecode.androidannotations.annotations.ViewById;
@@ -88,16 +89,18 @@ public class TeamDetailFragment extends Fragment {
 			}
 		});
 		
+		return rootView;
+	}
+	
+	@AfterViews
+	void reloadStudents() {
 		try {
-			students = studentDao.queryForAll();
+			students = studentDao.queryBuilder().where().eq("team_id", mItem).query();
 			studentList.setAdapter(new ArrayAdapter<Student>(getActivity(),
 					android.R.layout.simple_list_item_activated_1,
 					android.R.id.text1, students));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
-
-		return rootView;
 	}
 }

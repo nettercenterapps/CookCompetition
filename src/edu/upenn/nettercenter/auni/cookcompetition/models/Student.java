@@ -12,8 +12,8 @@ public class Student {
 	private String name;
 	@DatabaseField
 	private String nickname;
-	@DatabaseField
-	private String team;
+    @DatabaseField(canBeNull = true, foreign = true)
+	private Team team;
 	@DatabaseField
 	private boolean isActive;
 
@@ -38,7 +38,7 @@ public class Student {
 	    return nickname;
 	}
 	
-	public String getTeam() {
+	public Team getTeam() {
 	    return team;
 	}
 	
@@ -50,7 +50,7 @@ public class Student {
 	    this.nickname = nickname;
 	}
 	
-	public void setTeam(String team) {
+	public void setTeam(Team team) {
 	    this.team = team;
 	}
 	
