@@ -10,6 +10,20 @@
         <item name="android:typeface">serif</item>
     </style>
     
+    
+    <style name="StudentNickname">
+        <item name="android:textColor">#000000</item>
+        <item name="android:textSize">42sp</item>
+        <item name="android:typeface">serif</item>
+    </style>
+    
+      <style name="isActive">
+        <item name="android:textColor">#000000</item>
+        <item name="android:textSize">42sp</item>
+        <item name="android:typeface">serif</item>
+    </style>
+    
+    
     <style name="NoTitleActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:displayOptions">useLogo|showHome</item>
     </style>

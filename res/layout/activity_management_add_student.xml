@@ -22,19 +22,20 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Full Name"
-            android:paddingTop="15dip"
+            android:inputType="textPersonName|textCapWords"
             android:paddingBottom="15dip"
-            android:inputType="textPersonName|textCapWords" >
+            android:paddingTop="15dip" >
         </EditText>
 
         <!-- TODO: change the color to the theme color -->
         <!-- http://stackoverflow.com/questions/12171209/change-the-line-color-used-in-listseparatortextviewstyle -->
+
         <TextView
+            style="?android:attr/listSeparatorTextViewStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nickname"
             android:layout_marginTop="10dip"
-            style="?android:attr/listSeparatorTextViewStyle">
+            android:text="Nickname" >
         </TextView>
 
         <EditText
@@ -43,10 +44,17 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Nickname"
-            android:paddingTop="15dip"
+            android:inputType="textPersonName|textCapWords"
             android:paddingBottom="15dip"
-            android:inputType="textPersonName|textCapWords" >
+            android:paddingTop="15dip" >
         </EditText>
+
+        <Switch
+            android:id="@+id/isActive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Active?" />
+
     </LinearLayout>
 
 </LinearLayout>

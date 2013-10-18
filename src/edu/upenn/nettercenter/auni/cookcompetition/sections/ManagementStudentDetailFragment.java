@@ -23,52 +23,61 @@ import android.widget.TextView;
  */
 @EFragment
 public class ManagementStudentDetailFragment extends Fragment {
-	
-	@OrmLiteDao(helper = DatabaseHelper.class, model = Student.class)
-	Dao<Student, Long> dao = null;
 
-	/**
-	 * The fragment argument representing the item ID that this fragment
-	 * represents.
-	 */
-	public static final String ARG_ITEM_ID = "item_id";
+    @OrmLiteDao(helper = DatabaseHelper.class, model = Student.class)
+    Dao<Student, Long> dao = null;
 
-	/**
-	 * The dummy content this fragment is presenting.
-	 */
-	private Student mItem;
+    /**
+     * The fragment argument representing the item ID that this fragment
+     * represents.
+     */
+    public static final String ARG_ITEM_ID = "item_id";
 
-	/**
-	 * Mandatory empty constructor for the fragment manager to instantiate the
-	 * fragment (e.g. upon screen orientation changes).
-	 */
-	public ManagementStudentDetailFragment() {
-	}
+    /**
+     * The dummy content this fragment is presenting.
+     */
+    private Student mItem;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    /**
+     * Mandatory empty constructor for the fragment manager to instantiate the
+     * fragment (e.g. upon screen orientation changes).
+     */
+    public ManagementStudentDetailFragment() {
+    }
 
-		if (getArguments().containsKey(ARG_ITEM_ID)) {
-			try {
-				mItem = dao.queryForId(getArguments().getLong(ARG_ITEM_ID));
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} 
-		}
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_student_detail,
-				container, false);
+        if (getArguments().containsKey(ARG_ITEM_ID)) {
+            try {
+                mItem = dao.queryForId(getArguments().getLong(ARG_ITEM_ID));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } 
+        }
+    }
 
-		if (mItem != null) {
-			((TextView) rootView.findViewById(R.id.student_name))
-					.setText(mItem.getName());
-		}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_student_detail,
+                container, false);
 
-		return rootView;
-	}
+        if (mItem != null) {
+            ((TextView) rootView.findViewById(R.id.student_name))
+            .setText(mItem.getName());
+            ((TextView) rootView.findViewById(R.id.student_nickname))
+            .setText("\"" + mItem.getNickname() + "\"");
+            if (mItem.isActive()) {
+                ((TextView) rootView.findViewById(R.id.isActive))
+                .setText("Active");                
+            } else {
+                ((TextView) rootView.findViewById(R.id.isActive))
+                .setText("Inactive");                                
+            }
+        }
+
+        return rootView;
+    }
 }
