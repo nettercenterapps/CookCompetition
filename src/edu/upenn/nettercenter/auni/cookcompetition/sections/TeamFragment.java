@@ -1,7 +1,6 @@
 package edu.upenn.nettercenter.auni.cookcompetition.sections;
 
 import java.sql.SQLException;
-import java.util.Iterator;
 import java.util.List;
 
 import android.app.AlertDialog;
@@ -9,7 +8,6 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EFragment;

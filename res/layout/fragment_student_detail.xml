@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:padding="@dimen/photo_padding" >
+    android:padding="@dimen/photo_padding">
 
     <ImageView
         android:id="@+id/photo"
@@ -12,7 +12,8 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/photo_padding"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_contact_picture_180_holo_light" />
+        android:src="@drawable/ic_contact_picture_180_holo_light"
+        android:contentDescription="@string/image_of_the_student" />
 
     <LinearLayout
         android:id="@+id/student_detail_list"
@@ -30,12 +31,14 @@
         <TextView
             android:id="@+id/student_nickname"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            style="@android:style/TextAppearance.Holo.Large" />
         
         <TextView
             android:id="@+id/isActive"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            style="@android:style/TextAppearance.Holo.Medium" />
     </LinearLayout>
 
 </LinearLayout>

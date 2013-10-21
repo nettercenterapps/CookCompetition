@@ -14,7 +14,6 @@ import com.googlecode.androidannotations.annotations.OrmLiteDao;
 import com.j256.ormlite.dao.Dao;
 
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
-import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Team;
 
 @EFragment

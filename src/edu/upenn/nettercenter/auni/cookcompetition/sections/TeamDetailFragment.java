@@ -16,7 +16,6 @@ import android.widget.TextView;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EFragment;
 import com.googlecode.androidannotations.annotations.OrmLiteDao;
-import com.googlecode.androidannotations.annotations.ViewById;
 import com.j256.ormlite.dao.Dao;
 
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
@@ -83,9 +82,16 @@ public class TeamDetailFragment extends Fragment {
 		
 		studentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {				
-				
+			public void onItemClick(AdapterView<?> parent, View view, int position,
+					long id) {				
+				try {
+					Student student = students.get(position);
+					student.setTeam(null);
+					studentDao.update(student);
+					reloadStudents();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		
