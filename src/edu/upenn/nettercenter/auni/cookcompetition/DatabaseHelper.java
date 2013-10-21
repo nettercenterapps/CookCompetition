@@ -13,7 +13,10 @@ import com.j256.ormlite.dao.RuntimeExceptionDao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
+import edu.upenn.nettercenter.auni.cookcompetition.models.Event;
+import edu.upenn.nettercenter.auni.cookcompetition.models.Role;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
+import edu.upenn.nettercenter.auni.cookcompetition.models.StudentRecord;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Team;
 
 /**
@@ -39,12 +42,16 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			Log.i(DatabaseHelper.class.getName(), "onCreate");
 			TableUtils.createTable(connectionSource, Student.class);
 			TableUtils.createTable(connectionSource, Team.class);
+			TableUtils.createTable(connectionSource, Event.class);
+			TableUtils.createTable(connectionSource, Role.class);
+			TableUtils.createTable(connectionSource, StudentRecord.class);
 		} catch (SQLException e) {
 			Log.e(DatabaseHelper.class.getName(), "Can't create database", e);
 			throw new RuntimeException(e);
 		}
 
 		RuntimeExceptionDao<Student, Long> dao = getRuntimeExceptionDao(Student.class);
+		RuntimeExceptionDao<Role, Long> roleDao = getRuntimeExceptionDao(Role.class);
 		List<Student> testStudents = Arrays.asList(
 					new Student("Albert Gross", "Al"),
 					new Student("Jamie Massey", null),
@@ -52,9 +59,17 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					new Student("David Elliott", "Dave"),
 					new Student("Patricia Bennett", "Patty")
 				);
+
+		List<Role> testRoles = Arrays.asList(
+				new Role("Cooking - Whole Grain")
+				);
 		for (Student student : testStudents) {
 			dao.create(student);
 		}
+		for (Role role : testRoles) {
+			roleDao.create(role);
+		}
+
 				
 		Log.i(DatabaseHelper.class.getName(), "created dummy entries in onCreate");
 	}
