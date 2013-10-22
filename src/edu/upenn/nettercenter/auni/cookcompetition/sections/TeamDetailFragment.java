@@ -5,9 +5,15 @@ import java.util.List;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.SparseBooleanArray;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -80,20 +86,62 @@ public class TeamDetailFragment extends Fragment {
 					.setText(mItem.getName());
 		}
 		
-		studentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position,
-					long id) {				
-				try {
-					Student student = students.get(position);
-					student.setTeam(null);
-					studentDao.update(student);
-					reloadStudents();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		studentList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+		studentList.setMultiChoiceModeListener(new MultiChoiceModeListener() {
+			 @Override
+			    public void onItemCheckedStateChanged(ActionMode mode, int position,
+			                                          long id, boolean checked) {
+			        // Here you can do something when items are selected/de-selected,
+			        // such as update the title in the CAB
+			    }
+
+			    @Override
+			    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+			        // Respond to clicks on the actions in the CAB
+			        switch (item.getItemId()) {
+			            case R.id.menu_select_delete:
+			               // deleteSelectedItems();
+			                try {
+			                	 SparseBooleanArray checked = studentList.getCheckedItemPositions();
+			                     for (int pos = 0; pos < checked.size(); pos++) {
+			                         if(checked.valueAt(pos)) {
+			                        	 Student student = students.get(pos);
+											student.setTeam(null);
+											studentDao.update(student);
+			                         }
+			                     }
+								reloadStudents();
+								mode.finish(); 
+								return true;
+							} catch (SQLException e) {
+								e.printStackTrace();
+							}			                		           
+			            default:
+			                return false;
+			        }
+			    }
+
+			    @Override
+			    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+			        // Inflate the menu for the CAB
+			        MenuInflater inflater = mode.getMenuInflater();
+			        inflater.inflate(R.menu.select_menu, menu);
+			        return true;
+			    }
+
+			    @Override
+			    public void onDestroyActionMode(ActionMode mode) {
+			        // Here you can make any necessary updates to the activity when
+			        // the CAB is removed. By default, selected items are deselected/unchecked.
+			    }
+
+			    @Override
+			    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+			        // Here you can perform updates to the CAB due to
+			        // an invalidate() request
+			        return false;
+			    }
+			});
 		
 		return rootView;
 	}
