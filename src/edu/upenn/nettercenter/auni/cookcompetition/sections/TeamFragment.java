@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EFragment;
@@ -14,6 +15,8 @@ import com.googlecode.androidannotations.annotations.OrmLiteDao;
 import com.j256.ormlite.dao.Dao;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
@@ -84,19 +87,43 @@ public class TeamFragment extends Fragment implements TeamListFragment.Callbacks
 		
 		try {
 			final List<Student> students = studentDao.queryBuilder().where().isNull("team_id").query();
+			if (students.size() <= 0) {
+				Toast.makeText(getActivity(), "All students have been already assigned to a team", Toast.LENGTH_LONG).show();
+				return;
+			}
+			
 			String[] names = new String[students.size()];
 			for (int i = 0; i < names.length; i++) {
 				names[i] = students.get(i).getName();
 			}
-			
+	        final ArrayList<Integer> mSelectedItems = new ArrayList<Integer>();
+
 			new AlertDialog.Builder(getActivity())
 		        .setTitle("")
-		        .setItems(names, new DialogInterface.OnClickListener() {
-		            public void onClick(DialogInterface dialog, int which) {
-		            	addStudentToCurrentTeam(students.get(which));
+		        .setMultiChoiceItems(names, null,  new DialogInterface.OnMultiChoiceClickListener(){
+		        	@Override
+		            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+						if (isChecked){
+		                      mSelectedItems.add(which);
+		                }
+		                else if(mSelectedItems.contains(which)){
+		                    mSelectedItems.remove(Integer.valueOf(which));
+		                }
 		            }
-		        })
-		        .show();
+		        	
+		 }).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+             @Override
+             public void onClick(DialogInterface dialog, int id) {
+            	 for (Integer i : mSelectedItems) { 
+            		addStudentToCurrentTeam(students.get(i));
+            	 }
+             }
+         }).setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+             @Override
+             public void onClick(DialogInterface dialog, int id) {
+             }
+         })
+         .show();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
