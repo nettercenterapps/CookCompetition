@@ -23,3 +23,20 @@ local.properties
 # Used by AndroidAnnotations
 .apt_generated
 .factorypath
+
+# Android Studio
+.idea/
+.gradle
+/*/local.properties
+/*/out
+/*/*/build
+/*/*/production
+*.iml
+*.iws
+*.ipr
+*~
+*.swp
+build
+
+# OS X
+**/.DS_Store
