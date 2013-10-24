@@ -43,17 +43,24 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 
 	@Override
 	public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {		
-		try {
-			Fragment fragment = (Fragment) sections.get(tab.getText().toString()).newInstance();
-			fragmentTransaction.replace(R.id.fragment_container, fragment);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}		
+        String fragmentName = sections.get(tab.getText().toString()).getName();
+        Fragment fragment = getFragmentManager().findFragmentByTag(fragmentName);
+        if (fragment == null) {
+            fragment = Fragment.instantiate(this, fragmentName);
+            fragmentTransaction.add(R.id.fragment_container, fragment, fragmentName);
+        } else {
+            fragmentTransaction.attach(fragment);
+        }
 	}
 
 	@Override
 	public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-	}
+        String fragmentName = sections.get(tab.getText().toString()).getName();
+        Fragment fragment = getFragmentManager().findFragmentByTag(fragmentName);
+        if (fragment != null) {
+            fragmentTransaction.detach(fragment);
+        }
+    }
 
 	@Override
 	public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {

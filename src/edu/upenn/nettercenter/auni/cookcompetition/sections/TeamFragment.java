@@ -1,8 +1,5 @@
 package edu.upenn.nettercenter.auni.cookcompetition.sections;
 
-import java.sql.SQLException;
-import java.util.List;
-
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
@@ -15,6 +12,9 @@ import com.googlecode.androidannotations.annotations.OptionsItem;
 import com.googlecode.androidannotations.annotations.OptionsMenu;
 import com.googlecode.androidannotations.annotations.OrmLiteDao;
 import com.j256.ormlite.dao.Dao;
+
+import java.sql.SQLException;
+import java.util.List;
 
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.R;
@@ -52,12 +52,14 @@ public class TeamFragment extends Fragment implements TeamListFragment.Callbacks
 	
 	@AfterViews
 	void loadFragments() {
-		listFragment = new TeamListFragment_();
-		getChildFragmentManager().beginTransaction()
-			.replace(R.id.list_container, listFragment)
-			.commit();
-		listFragment.setCallbacks(this);
-		setHasOptionsMenu(true);
+        if (listFragment == null) {
+            listFragment = new TeamListFragment_();
+            getChildFragmentManager().beginTransaction()
+                .replace(R.id.list_container, listFragment)
+                .commit();
+            listFragment.setCallbacks(this);
+            setHasOptionsMenu(true);
+        }
 	}
 
 	/**
@@ -156,4 +158,16 @@ public class TeamFragment extends Fragment implements TeamListFragment.Callbacks
 		    .setNegativeButton(android.R.string.cancel, null)
 		    .show();
 	}
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        System.out.println("onSaveInstanceState");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        System.out.println("onDestroy");
+    }
 }

@@ -1,7 +1,5 @@
 package edu.upenn.nettercenter.auni.cookcompetition.sections;
 
-import java.sql.SQLException;
-
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
@@ -14,6 +12,8 @@ import com.googlecode.androidannotations.annotations.OptionsItem;
 import com.googlecode.androidannotations.annotations.OptionsMenu;
 import com.googlecode.androidannotations.annotations.OrmLiteDao;
 import com.j256.ormlite.dao.Dao;
+
+import java.sql.SQLException;
 
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.R;
@@ -46,12 +46,14 @@ public class ManagementFragment extends Fragment implements ManagementStudentLis
 	
 	@AfterViews
 	void loadFragments() {
-		studentListFragment = new ManagementStudentListFragment_();
-		getChildFragmentManager().beginTransaction()
-			.replace(R.id.list_container, studentListFragment)
-			.commit();
-		studentListFragment.setCallbacks(this);
-		setHasOptionsMenu(true);
+        if (studentListFragment == null) {
+            studentListFragment = new ManagementStudentListFragment_();
+            getChildFragmentManager().beginTransaction()
+                .replace(R.id.list_container, studentListFragment)
+                .commit();
+            studentListFragment.setCallbacks(this);
+		    setHasOptionsMenu(true);
+        }
 	}
 
 	/**

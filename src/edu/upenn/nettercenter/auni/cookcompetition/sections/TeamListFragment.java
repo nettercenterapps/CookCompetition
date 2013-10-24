@@ -1,8 +1,5 @@
 package edu.upenn.nettercenter.auni.cookcompetition.sections;
 
-import java.sql.SQLException;
-import java.util.List;
-
 import android.app.ListFragment;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +9,9 @@ import android.widget.ListView;
 import com.googlecode.androidannotations.annotations.EFragment;
 import com.googlecode.androidannotations.annotations.OrmLiteDao;
 import com.j256.ormlite.dao.Dao;
+
+import java.sql.SQLException;
+import java.util.List;
 
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Team;
