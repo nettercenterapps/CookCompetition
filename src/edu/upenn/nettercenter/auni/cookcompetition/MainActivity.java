@@ -1,9 +1,6 @@
 
 package edu.upenn.nettercenter.auni.cookcompetition;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
@@ -12,9 +9,12 @@ import android.app.FragmentTransaction;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EActivity;
 
-import edu.upenn.nettercenter.auni.cookcompetition.sections.EventFragment_;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import edu.upenn.nettercenter.auni.cookcompetition.sections.ManagementFragment_;
 import edu.upenn.nettercenter.auni.cookcompetition.sections.TeamFragment_;
+import edu.upenn.nettercenter.auni.cookcompetition.sections.TodayFragment_;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends Activity implements ActionBar.TabListener {
@@ -22,28 +22,29 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	private static Map<String, Class<?>> sections = new LinkedHashMap<String, Class<?>>();
 	
 	static {
-		sections.put("Event", EventFragment_.class);
+		sections.put("Today", TodayFragment_.class);
 		sections.put("Student", ManagementFragment_.class);
 		sections.put("Team", TeamFragment_.class);
 	}
 
 	@AfterViews
 	void setUpActionBar() {
-		final ActionBar actionBar = getActionBar();
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-		for (String name : sections.keySet()) {
-			actionBar.addTab(actionBar.newTab()
-					.setText(name)
-					.setTabListener(this)
-			);			
-		}
+		ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+            for (String name : sections.keySet()) {
+                actionBar.addTab(actionBar.newTab()
+                        .setText(name)
+                        .setTabListener(this)
+                );
+            }
+        }
 	}
 
 	@Override
 	public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {		
 		try {
-			Fragment fragment = (Fragment) sections.get(tab.getText()).newInstance();
+			Fragment fragment = (Fragment) sections.get(tab.getText().toString()).newInstance();
 			fragmentTransaction.replace(R.id.fragment_container, fragment);
 		} catch (Exception e) {
 			e.printStackTrace();
