@@ -37,6 +37,7 @@ local.properties
 *~
 *.swp
 build
+gradle/
 
 # OS X
 **/.DS_Store
