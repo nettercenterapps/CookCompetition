@@ -1,11 +1,9 @@
 package edu.upenn.nettercenter.auni.cookcompetition.sections;
 
-import java.sql.SQLException;
-import java.util.List;
-
 import android.app.ListFragment;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -13,7 +11,13 @@ import com.googlecode.androidannotations.annotations.EFragment;
 import com.googlecode.androidannotations.annotations.OrmLiteDao;
 import com.j256.ormlite.dao.Dao;
 
+import java.sql.SQLException;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
+import edu.upenn.nettercenter.auni.cookcompetition.adapters.SeparatedListAdapter;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
 
 @EFragment
@@ -23,7 +27,7 @@ public class ManagementStudentListFragment extends ListFragment {
 	Dao<Student, Long> dao;
 
 	private Callbacks mCallbacks = sDummyCallbacks;
-	private List<Student> students;
+    private SeparatedListAdapter adapter;
 	
 	/**
 	 * A callback interface that all activities containing this fragment must
@@ -53,12 +57,14 @@ public class ManagementStudentListFragment extends ListFragment {
 	 */
 	public ManagementStudentListFragment() {
 	}
-	
+
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		
-		setActivateOnItemClick(true);
+
+        if (getListView() != null) {
+            getListView().setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+        }
 		refreshList();
 	}
 	
@@ -71,33 +77,31 @@ public class ManagementStudentListFragment extends ListFragment {
 			long id) {
 		super.onListItemClick(listView, view, position, id);
 
-		mCallbacks.onItemSelected(students.get(position).getId());
+        if (adapter != null) {
+            long studentId = ((Student) adapter.getItem(position)).getId();
+            mCallbacks.onItemSelected(studentId);
+        }
 	}
 
-	/**
-	 * Turns on activate-on-click mode. When this mode is on, list items will be
-	 * given the 'activated' state when touched.
-	 */
-	public void setActivateOnItemClick(boolean activateOnItemClick) {
-		// When setting CHOICE_MODE_SINGLE, ListView will automatically
-		// give items the 'activated' state when touched.
-		getListView().setChoiceMode(
-				activateOnItemClick ? ListView.CHOICE_MODE_SINGLE
-						: ListView.CHOICE_MODE_NONE);
-	}
-	
-	public void refreshList() {
+	@SuppressWarnings("ConstantConditions")
+    public void refreshList() {
 		try {
-			students = getStudents();
-			setListAdapter(new ArrayAdapter<Student>(getActivity(),
-					android.R.layout.simple_list_item_activated_1,
-					android.R.id.text1, students));
+            List<Student> students = getStudents();
+            adapter = new SeparatedListAdapter(getActivity());
+            LinkedHashMap<String,List<Student>> studentMap = Student.partitionByName(students);
+            for (Map.Entry<String, List<Student>> entry : studentMap.entrySet()) {
+                ArrayAdapter<Student> listAdapter = new ArrayAdapter<Student>(getActivity(),
+                        android.R.layout.simple_list_item_activated_1,
+                        android.R.id.text1, entry.getValue());
+                adapter.addSection(entry.getKey(), listAdapter);
+            }
+            setListAdapter(adapter);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	private List<Student> getStudents() throws SQLException {		
-		return dao.queryForAll();
+		return dao.queryBuilder().selectColumns("id", "name").query();
 	}
 }
