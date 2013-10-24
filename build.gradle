@@ -8,8 +8,13 @@ buildscript {
 }
 apply plugin: 'android'
 
+configurations {
+    apt
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
+    apt fileTree(dir: 'compile-libs', include: '*.jar')
 }
 
 android {
@@ -39,4 +44,16 @@ android {
         debug.setRoot('build-types/debug')
         release.setRoot('build-types/release')
     }
+}
+
+android.applicationVariants.all { variant ->
+    ext.aptOutput = file(".apt_generated")
+    ext.aptOutput.deleteDir()
+    ext.aptOutput.mkdirs()
+
+    variant.javaCompile.options.compilerArgs += [
+            '-processorpath', configurations.apt.asPath,
+            '-AandroidManifestFile=' + variant.processResources.manifestFile,
+            '-s', ext.aptOutput
+    ]
 }
