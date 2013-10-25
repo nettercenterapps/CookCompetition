@@ -6,8 +6,13 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable
 public class Role {
 
+    public static final Role ROLE_ABSENT = new Role("Absent");
+    static {
+        ROLE_ABSENT.id = 0L;
+    }
+
 	@DatabaseField(generatedId = true)
-	private Long id;
+	private long id;
 
 	@DatabaseField
 	private String name;
@@ -19,11 +24,21 @@ public class Role {
 		this.name = name;
 	}
 
-	public String getName() {
+    public long getId() {
+        return id;
+    }
+
+    public String getName() {
 		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
 	}
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
 }

@@ -1,0 +1,85 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/student_detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:baselineAligned="false"
+    android:divider="?android:attr/dividerHorizontal"
+    android:showDividers="middle">
+
+    <LinearLayout
+        android:layout_weight="1" 
+        android:id="@+id/today_student_detail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/photo_padding"
+        android:layout_marginLeft="@dimen/photo_padding"
+        android:layout_marginRight="@dimen/photo_padding"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/student_name"
+            style="@style/StudentName.Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/student_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@android:style/TextAppearance.Holo.Medium"
+            android:textColor="@android:color/holo_blue_dark"
+            android:layout_marginTop="2dip"/>
+
+        <TextView
+            style="?android:attr/listSeparatorTextViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:text="Team" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/team_name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            style="@android:style/TextAppearance.Holo.Medium"
+            android:padding="7dip"
+            android:layout_marginTop="3dip"
+            android:layout_marginBottom="3dip"
+            />
+
+        <TextView
+            style="?android:attr/listSeparatorTextViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:text="Role" >
+        </TextView>
+
+        <Spinner
+            android:id="@+id/student_role"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="7dip"
+            android:paddingTop="10dip"
+            android:paddingBottom="10dip"
+        />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/score_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/photo_padding">
+        <TextView
+            style="?android:attr/listSeparatorTextViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Score" >
+        </TextView>
+    </LinearLayout>
+
+</LinearLayout>
