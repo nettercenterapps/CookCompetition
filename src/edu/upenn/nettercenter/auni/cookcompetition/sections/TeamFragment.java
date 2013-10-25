@@ -21,6 +21,7 @@ import java.util.List;
 
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.R;
+import edu.upenn.nettercenter.auni.cookcompetition.Utils;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Team;
 
@@ -91,7 +92,7 @@ public class TeamFragment extends Fragment implements TeamListFragment.Callbacks
 				Toast.makeText(getActivity(), "All students have been already assigned to a team", Toast.LENGTH_LONG).show();
 				return;
 			}
-			
+			Utils.sortStudentsByName(students);
 			String[] names = new String[students.size()];
 			for (int i = 0; i < names.length; i++) {
 				names[i] = students.get(i).getName();
