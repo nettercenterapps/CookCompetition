@@ -1,8 +1,8 @@
 package edu.upenn.nettercenter.auni.cookcompetition.models;
 
-import java.util.Date;
-
 import com.j256.ormlite.field.DatabaseField;
+
+import java.util.Date;
 
 public class Event {
 
@@ -18,7 +18,11 @@ public class Event {
 	public Event() {
 	}
 
-	public Date getDate() {
+    public Event(String name) {
+        this.name = name;
+    }
+
+    public Date getDate() {
 		return date;
 	}
 
@@ -33,4 +37,13 @@ public class Event {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "id=" + id +
+                ", date=" + date +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

@@ -2,18 +2,94 @@ package edu.upenn.nettercenter.auni.cookcompetition.sections;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ViewSwitcher;
 
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EFragment;
+import com.googlecode.androidannotations.annotations.OrmLiteDao;
+import com.googlecode.androidannotations.annotations.ViewById;
+import com.j256.ormlite.dao.Dao;
 
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.R;
+import edu.upenn.nettercenter.auni.cookcompetition.Utils;
+import edu.upenn.nettercenter.auni.cookcompetition.models.Event;
 
-@EFragment(R.layout.twopane)
+@EFragment(R.layout.fragment_today)
 public class TodayFragment extends Fragment implements ManagementStudentListFragment.Callbacks {
+    @OrmLiteDao(helper = DatabaseHelper.class, model = Event.class)
+    Dao<Event, Long> eventDao = null;
+
     ManagementStudentListFragment listFragment;
     TodayDetailFragment detailFragment;
 
+    @ViewById
+    ViewSwitcher switcher;
+
+    @ViewById
+    EditText eventName;
+
+    @ViewById
+    Button createEvent;
+
     Long selectedItemId;
+
+    @AfterViews
+    void determineViewShown() {
+        int index = getTodayEvent() == null ? 0 : 1;
+        switcher.setDisplayedChild(index);
+        try {
+            System.out.println(eventDao.queryForAll());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Event getTodayEvent() {
+        try {
+            Date today = Utils.getDateOfToday();
+            List<Event> events = eventDao.queryForEq("date", today);
+            if (events.size() > 0) {
+                return events.get(0);
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @AfterViews
+    void loadCreateEventView() {
+        final String hintText = "Event on " + new SimpleDateFormat("MMM d, yyyy").format(new Date());
+        eventName.setHint(hintText);
+        createEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String name = eventName.getText().toString().trim();
+                if (name.isEmpty()) {
+                    name = hintText;
+                }
+                Event event = new Event(name);
+                event.setDate(Utils.getDateOfToday());
+                try {
+                    eventDao.create(event);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                determineViewShown();
+            }
+        });
+    }
 
     @AfterViews
     void loadFragments() {
