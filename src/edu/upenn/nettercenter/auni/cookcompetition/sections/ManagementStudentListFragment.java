@@ -17,19 +17,28 @@ import java.util.List;
 import java.util.Map;
 
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
+import edu.upenn.nettercenter.auni.cookcompetition.Utils;
 import edu.upenn.nettercenter.auni.cookcompetition.adapters.SeparatedListAdapter;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
+import edu.upenn.nettercenter.auni.cookcompetition.models.Team;
 
 @EFragment
 public class ManagementStudentListFragment extends ListFragment {
 
-	@OrmLiteDao(helper = DatabaseHelper.class, model = Student.class)
+    private boolean groupByTeam;
+    @OrmLiteDao(helper = DatabaseHelper.class, model = Student.class)
 	Dao<Student, Long> dao;
+    @OrmLiteDao(helper = DatabaseHelper.class, model = Team.class)
+    Dao<Team, Long> teamDao;
 
 	private Callbacks mCallbacks = sDummyCallbacks;
     private SeparatedListAdapter adapter;
-	
-	/**
+
+    public void setGroupByTeam(boolean groupByTeam) {
+        this.groupByTeam = groupByTeam;
+    }
+
+    /**
 	 * A callback interface that all activities containing this fragment must
 	 * implement. This mechanism allows activities to be notified of item
 	 * selections.
@@ -88,7 +97,12 @@ public class ManagementStudentListFragment extends ListFragment {
 		try {
             List<Student> students = getStudents();
             adapter = new SeparatedListAdapter(getActivity());
-            LinkedHashMap<String,List<Student>> studentMap = Student.partitionByName(students);
+            LinkedHashMap<String,List<Student>> studentMap;
+            if (groupByTeam) {
+                studentMap = Utils.partitionByTeam(students);
+            } else {
+                studentMap = Utils.partitionByName(students);
+            }
             for (Map.Entry<String, List<Student>> entry : studentMap.entrySet()) {
                 ArrayAdapter<Student> listAdapter = new ArrayAdapter<Student>(getActivity(),
                         android.R.layout.simple_list_item_activated_1,
@@ -102,6 +116,6 @@ public class ManagementStudentListFragment extends ListFragment {
 	}
 	
 	private List<Student> getStudents() throws SQLException {		
-		return dao.queryBuilder().selectColumns("id", "name").query();
+		return dao.queryForAll();
 	}
 }

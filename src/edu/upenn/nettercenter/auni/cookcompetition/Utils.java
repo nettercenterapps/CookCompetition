@@ -75,7 +75,9 @@ public class Utils {
                 studentsWithoutTeam.add(student);
             }
         }
-        result.put("No Team", studentsWithoutTeam);
+        if (studentsWithoutTeam.size() > 0) {
+            result.put("No Team", studentsWithoutTeam);
+        }
         return result;
     }
 }

@@ -3,12 +3,6 @@ package edu.upenn.nettercenter.auni.cookcompetition.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-
 @DatabaseTable
 public class Student {
 
@@ -18,7 +12,7 @@ public class Student {
 	private String name;
 	@DatabaseField
 	private String nickname;
-    @DatabaseField(canBeNull = true, foreign = true)
+    @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true)
 	private Team team;
 	@DatabaseField
 	private boolean isActive;
@@ -73,33 +67,4 @@ public class Student {
 		return name;
 	}
 
-    public static LinkedHashMap<String, List<Student>> partitionByName(List<Student> students) {
-        Collections.sort(students, new Comparator<Student>() {
-            @Override
-            public int compare(Student student1, Student student2) {
-                String name1 = student1.name;
-                String name2 = student2.name;
-
-                if (name1 == null && name2 == null) {
-                    return 0;
-                } else if (name1 == null) {
-                    return -1;
-                } else if (name2 == null) {
-                    return 1;
-                } else {
-                    return name1.trim().compareToIgnoreCase(name2.trim());
-                }
-            }
-        });
-        LinkedHashMap<String, List<Student>> result = new LinkedHashMap<String, List<Student>>();
-        for (Student student : students) {
-            String c = String.valueOf(student.getName().charAt(0));
-
-            if (!result.containsKey(c)) {
-                result.put(c, new ArrayList<Student>());
-            }
-            result.get(c).add(student);
-        }
-        return result;
-    }
 }
