@@ -53,11 +53,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		RuntimeExceptionDao<Student, Long> dao = getRuntimeExceptionDao(Student.class);
 		RuntimeExceptionDao<Role, Long> roleDao = getRuntimeExceptionDao(Role.class);
 		List<Student> testStudents = Arrays.asList(
-					new Student("Albert Gross", "Al"),
-					new Student("Jamie Massey", null),
-					new Student("Pam Horton", "Pamcakes"),
-					new Student("David Elliott", "Dave"),
-					new Student("Patricia Bennett", "Patty")
+					new Student("Albert", "G", "Al"),
+					new Student("Jamie", "M", null),
+					new Student("Pam", "H", "Pamcakes"),
+					new Student("David", "E", "Dave"),
+					new Student("Patricia", "B", "Patty")
 				);
 
 		List<Role> testRoles = Arrays.asList(

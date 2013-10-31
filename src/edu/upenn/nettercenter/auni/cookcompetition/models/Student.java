@@ -9,7 +9,9 @@ public class Student {
 	@DatabaseField(generatedId = true)
 	private Long id;
 	@DatabaseField
-	private String name;
+	private String firstName;
+	@DatabaseField
+	private String lastInitial;
 	@DatabaseField
 	private String nickname;
     @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true)
@@ -22,8 +24,9 @@ public class Student {
 	public Student() {
 	}
 	
-	public Student(String name, String nickname) {
-		this.name = name;
+	public Student(String firstName, String lastInitial, String nickname) {
+		this.firstName = firstName;
+		this.lastInitial = lastInitial;
 		this.nickname = nickname;
 		this.isActive = true;
 	}
@@ -32,8 +35,12 @@ public class Student {
 		return id;
 	}
 	
+	public String getFirstName() {
+	    return firstName;
+	}
+	
 	public String getName() {
-		return name;
+		return firstName + " " + lastInitial + ".";
 	}
 	
 	public String getNickname() {
@@ -44,8 +51,12 @@ public class Student {
 	    return team;
 	}
 	
-	public void setName(String name) {
-		this.name = name;
+	public String getLastInitial() {
+	    return lastInitial;
+	}
+	
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 	
 	public void setNickname(String nickname) {
@@ -63,10 +74,14 @@ public class Student {
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
+	
+	public void setLastInital(String li) {
+	    lastInitial = li;
+	}
 
 	@Override
 	public String toString() {
-		return name;
+		return getName();
 	}
 
     public Role getRole() {

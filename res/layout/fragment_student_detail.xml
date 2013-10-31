@@ -4,16 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:padding="@dimen/photo_padding">
+    android:padding="@dimen/photo_padding" >
 
     <ImageView
         android:id="@+id/photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/image_of_the_student"
         android:padding="@dimen/photo_padding"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_contact_picture_180_holo_light"
-        android:contentDescription="@string/image_of_the_student" />
+        android:src="@drawable/ic_contact_picture_180_holo_light" />
 
     <LinearLayout
         android:id="@+id/student_detail_list"
@@ -27,18 +27,18 @@
             style="@style/StudentName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-        
+
         <TextView
             android:id="@+id/student_nickname"
+            style="@android:style/TextAppearance.Holo.Large"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@android:style/TextAppearance.Holo.Large" />
-        
+            android:layout_height="wrap_content" />
+
         <TextView
             android:id="@+id/isActive"
+            style="@android:style/TextAppearance.Holo.Medium"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@android:style/TextAppearance.Holo.Medium" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </LinearLayout>
