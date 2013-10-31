@@ -15,6 +15,8 @@ import java.util.List;
 
 import edu.upenn.nettercenter.auni.cookcompetition.models.Event;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Role;
+import edu.upenn.nettercenter.auni.cookcompetition.models.Score;
+import edu.upenn.nettercenter.auni.cookcompetition.models.ScoreField;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
 import edu.upenn.nettercenter.auni.cookcompetition.models.StudentRecord;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Team;
@@ -45,6 +47,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.createTable(connectionSource, Event.class);
 			TableUtils.createTable(connectionSource, Role.class);
 			TableUtils.createTable(connectionSource, StudentRecord.class);
+            TableUtils.createTable(connectionSource, ScoreField.class);
+            TableUtils.createTable(connectionSource, Score.class);
 		} catch (SQLException e) {
 			Log.e(DatabaseHelper.class.getName(), "Can't create database", e);
 			throw new RuntimeException(e);
