@@ -1,10 +1,21 @@
 package edu.upenn.nettercenter.auni.cookcompetition.sections;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.sql.SQLException;
 import java.util.List;
 
 import android.app.Fragment;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -18,6 +29,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ImageView;
 
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EFragment;
@@ -52,6 +64,11 @@ public class TeamDetailFragment extends Fragment {
 	private Team mItem;
 	
 	private List<Student> students;
+	
+	private String selectedImagePath;
+	 
+	private String filemanagerstring;
+	    
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -72,18 +89,76 @@ public class TeamDetailFragment extends Fragment {
 			} 
 		}
 	}
+	
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	 if(requestCode == 1 && data != null && data.getData() != null) {
+    	        Uri _uri = data.getData();
 
+    	        Cursor cursor = getActivity().getContentResolver().query(_uri, new String[] { android.provider.MediaStore.Images.ImageColumns.DATA }, null, null, null);
+    	        cursor.moveToFirst();
+    	        
+    	        Uri dir = Uri.parse(cursor.getString(0));
+    	        //Link to the image
+    	        final String imageFilePath = cursor.getString(0);
+    	        cursor.close();
+    	        File imageDir = new File("/storage/sdcard/cookApp");
+    	        //make the directory if !exists
+    	        imageDir.mkdirs();
+    	        try {
+    	            File source= new File(imageFilePath);
+    	            File destination= new File(imageDir, mItem.getName());
+    	            if (source.exists()) {
+    	                FileChannel src = new FileInputStream(source).getChannel();
+    	                FileChannel dst = new FileOutputStream(destination).getChannel();
+    	                //copy image
+    	                dst.transferFrom(src, 0, src.size());
+    	                src.close();
+    	                dst.close();
+    	                //set image
+    	                ImageView image = ((ImageView) getView().findViewById(R.id.photo));
+    	                image.setImageURI(Uri.parse(destination.getAbsolutePath()));
+    	            }
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    	    }
+    	    super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_team_detail,
 				container, false);
 
+
+        ImageView image = ((ImageView) rootView.findViewById(R.id.photo));
+        image.setOnClickListener(new ImageView.OnClickListener() {
+        	@Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent,
+                        "Select Picture"), 1);
+            }
+        });		
+		
 		studentList = (ListView) rootView.findViewById(R.id.student_list);
 		
 		if (mItem != null) {
 			((TextView) rootView.findViewById(R.id.team_name))
 					.setText(mItem.getName());
+		}
+		
+		File imagePath = new File("/storage/sdcard/cookApp", mItem.getName());
+		if (imagePath.exists()){
+			//image has same name as team, so if image exists, set it to team
+            image.setImageURI(Uri.parse(imagePath.getAbsolutePath()));
 		}
 		
 		studentList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);

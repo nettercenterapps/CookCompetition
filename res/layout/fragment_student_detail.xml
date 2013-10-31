@@ -13,7 +13,7 @@
         android:padding="@dimen/photo_padding"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_contact_picture_180_holo_light"
-        android:contentDescription="@string/image_of_the_student" />
+        android:contentDescription="@string/image_of_the_team" />
 
     <LinearLayout
         android:id="@+id/student_detail_list"

@@ -2,7 +2,7 @@
 
 	<string name="app_name">CookCompetitionManager</string>
 	<string name="menu_student_delete">Delete</string>
-	<string name="image_of_the_student">Image of the student</string>
+	<string name="image_of_the_team">Image of the Team</string>
 	<string name="placeholder_for_extra_information_of_team">Placeholder for extra information of team</string>
 
 </resources>

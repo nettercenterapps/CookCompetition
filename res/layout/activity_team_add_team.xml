@@ -15,7 +15,7 @@
         android:paddingLeft="50dp"
         android:paddingRight="50dp"
         android:paddingTop="25dp" >
-
+        
         <EditText
             android:id="@+id/team_name"
             android:layout_width="match_parent"
