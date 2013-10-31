@@ -16,8 +16,6 @@ public class Student {
 	private Team team;
 	@DatabaseField
 	private boolean isActive;
-    @DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true)
-    private Role role;
 
 	public Student() {
 	}
@@ -68,12 +66,4 @@ public class Student {
 	public String toString() {
 		return name;
 	}
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
 }

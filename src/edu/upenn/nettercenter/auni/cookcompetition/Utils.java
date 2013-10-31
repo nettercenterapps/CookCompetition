@@ -1,5 +1,8 @@
 package edu.upenn.nettercenter.auni.cookcompetition;
 
+import com.j256.ormlite.dao.Dao;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -9,6 +12,7 @@ import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import edu.upenn.nettercenter.auni.cookcompetition.models.Event;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
 
 public class Utils {
@@ -92,5 +96,20 @@ public class Utils {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();
+    }
+
+    public static Event getTodayEvent(Dao<Event, Long> eventDao) {
+        try {
+            Date today = Utils.getDateOfToday();
+            List<Event> events = eventDao.queryForEq("date", today);
+            if (events.size() > 0) {
+                return events.get(0);
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
