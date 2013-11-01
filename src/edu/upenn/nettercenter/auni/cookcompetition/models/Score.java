@@ -10,6 +10,9 @@ public class Score {
     private long id;
 
     @DatabaseField(foreign = true, canBeNull = false)
+    private Student student;
+
+    @DatabaseField(foreign = true, canBeNull = false)
     private Event event;
 
     @DatabaseField(foreign = true, canBeNull = false)
@@ -24,6 +27,14 @@ public class Score {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
     }
 
     public Event getEvent() {

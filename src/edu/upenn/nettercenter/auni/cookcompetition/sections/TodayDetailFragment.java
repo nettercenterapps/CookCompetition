@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -21,25 +23,29 @@ import java.util.List;
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.R;
 import edu.upenn.nettercenter.auni.cookcompetition.Utils;
+import edu.upenn.nettercenter.auni.cookcompetition.adapters.ScoreFieldAdapter;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Event;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Role;
+import edu.upenn.nettercenter.auni.cookcompetition.models.Score;
+import edu.upenn.nettercenter.auni.cookcompetition.models.ScoreField;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
 import edu.upenn.nettercenter.auni.cookcompetition.models.StudentRecord;
 
 @EFragment(R.layout.fragment_today_detail)
-public class TodayDetailFragment extends Fragment {
+public class TodayDetailFragment extends Fragment implements ScoreFieldAdapter.Callbacks{
 
 	@OrmLiteDao(helper = DatabaseHelper.class, model = Student.class)
 	Dao<Student, Long> dao = null;
-
     @OrmLiteDao(helper = DatabaseHelper.class, model = Role.class)
     Dao<Role, Long> roleDao = null;
-
     @OrmLiteDao(helper = DatabaseHelper.class, model = StudentRecord.class)
     Dao<StudentRecord, Long> studentRecordDao = null;
-
     @OrmLiteDao(helper = DatabaseHelper.class, model = Event.class)
     Dao<Event, Long> eventDao = null;
+    @OrmLiteDao(helper = DatabaseHelper.class, model = Score.class)
+    Dao<Score, Long> scoreDao = null;
+    @OrmLiteDao(helper = DatabaseHelper.class, model = ScoreField.class)
+    Dao<ScoreField, Long> scoreFieldDao = null;
 
     @ViewById(R.id.student_name)
     TextView studentName;
@@ -53,6 +59,9 @@ public class TodayDetailFragment extends Fragment {
     @ViewById(R.id.student_role)
     Spinner studentRole;
 
+    @ViewById(R.id.score_list)
+    ListView scoreList;
+
     /**
 	 * The fragment argument representing the item ID that this fragment
 	 * represents.
@@ -63,8 +72,8 @@ public class TodayDetailFragment extends Fragment {
 	 * The dummy content this fragment is presenting.
 	 */
 	private Student student;
-
     private StudentRecord studentRecord;
+    private Event todayEvent;
 
 
     /**
@@ -81,7 +90,7 @@ public class TodayDetailFragment extends Fragment {
 		if (getArguments().containsKey(ARG_ITEM_ID)) {
 			try {
 				student = dao.queryForId(getArguments().getLong(ARG_ITEM_ID));
-                Event todayEvent = Utils.getTodayEvent(eventDao);
+                todayEvent = Utils.getTodayEvent(eventDao);
 
                 HashMap<String, Object> args = new HashMap<String, Object>();
                 args.put("student_id", student.getId());
@@ -101,7 +110,7 @@ public class TodayDetailFragment extends Fragment {
 	}
 
 	@AfterViews
-	void refresh() {
+	void refreshInfo() {
         try {
             if (student != null) {
                 studentName.setText(student.getName());
@@ -153,12 +162,64 @@ public class TodayDetailFragment extends Fragment {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
 
+    @AfterViews
+    void refreshScore() {
+        try {
+            List<Score> scores = getScores();
+            List<ScoreField> scoreFields = getScoreField();
+            ListAdapter adapter = new ScoreFieldAdapter(getActivity(), this, scoreFields, scores);
+            scoreList.setAdapter(adapter);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private List<Role> getRoles() throws SQLException {
         List<Role> roles = roleDao.queryForAll();
         roles.add(0, Role.ROLE_ABSENT);
         return roles;
+    }
+
+    private List<Score> getScores() throws SQLException {
+        HashMap<String, Object> args = new HashMap<String, Object>();
+        args.put("student_id", student.getId());
+        args.put("event_id", todayEvent.getId());
+        return scoreDao.queryForFieldValues(args);
+    }
+
+    private List<ScoreField> getScoreField() throws SQLException {
+        return scoreFieldDao.queryForAll();
+    }
+
+    @Override
+    public void onScoreFieldChanged(ScoreField scoreField, int score) {
+        try {
+            HashMap<String, Object> args = new HashMap<String, Object>();
+            args.put("student_id", student.getId());
+            args.put("event_id", todayEvent.getId());
+            args.put("scoreField_id", scoreField.getId());
+            List<Score> scores = scoreDao.queryForFieldValues(args);
+
+            // N/A before
+            if (scores.size() == 0) {
+                // Do nothing in case of N/A -> N/A
+                if (score != 0) {
+                    Score s = new Score();
+                    s.setStudent(student);
+                    s.setEvent(todayEvent);
+                    s.setScoreField(scoreField);
+                    s.setScore(score);
+                    scoreDao.create(s);
+                }
+            } else {
+                Score s = scores.get(0);
+                s.setScore(score);
+                scoreDao.update(s);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

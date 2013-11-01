@@ -56,6 +56,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 		RuntimeExceptionDao<Student, Long> dao = getRuntimeExceptionDao(Student.class);
 		RuntimeExceptionDao<Role, Long> roleDao = getRuntimeExceptionDao(Role.class);
+        RuntimeExceptionDao<ScoreField, Long> scoreFields = getRuntimeExceptionDao(ScoreField.class);
 		List<Student> testStudents = Arrays.asList(
 					new Student("Albert Gross", "Al"),
 					new Student("Jamie Massey", null),
@@ -67,12 +68,22 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		List<Role> testRoles = Arrays.asList(
 				new Role("Cooking - Whole Grain")
 				);
+
+        List<ScoreField> testScoreFields = Arrays.asList(
+                new ScoreField("Score Field 1"),
+                new ScoreField("Score Field 2")
+        );
+
 		for (Student student : testStudents) {
 			dao.create(student);
 		}
 		for (Role role : testRoles) {
 			roleDao.create(role);
 		}
+        for (ScoreField scoreField : testScoreFields) {
+            scoreFields.create(scoreField);
+        }
+
 
 				
 		Log.i(DatabaseHelper.class.getName(), "created dummy entries in onCreate");

@@ -15,6 +15,13 @@ public class ScoreField {
     @DatabaseField
     private int type;
 
+    public ScoreField() {
+    }
+
+    public ScoreField(String name) {
+        this.name = name;
+    }
+
     public long getId() {
         return id;
     }
