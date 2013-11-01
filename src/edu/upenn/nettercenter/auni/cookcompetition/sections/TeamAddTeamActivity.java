@@ -1,12 +1,11 @@
 package edu.upenn.nettercenter.auni.cookcompetition.sections;
 
-import java.sql.SQLException;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -21,6 +20,8 @@ import com.googlecode.androidannotations.annotations.OptionsItem;
 import com.googlecode.androidannotations.annotations.OrmLiteDao;
 import com.googlecode.androidannotations.annotations.ViewById;
 import com.j256.ormlite.dao.Dao;
+
+import java.sql.SQLException;
 
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.R;
@@ -39,10 +40,7 @@ public class TeamAddTeamActivity extends Activity {
 	EditText teamName;
 	
 	@ViewById
-	EditText studentNickname;
-	
-	@ViewById
-	ViewGroup studentEditor;
+	ViewGroup teamEditor;
 	
 		
 	@Override
@@ -104,7 +102,7 @@ public class TeamAddTeamActivity extends Activity {
 	void next() {
 		if (isNameEmpty()) {
 			saveCurrentItem();
-			clearAllEditText(studentEditor);
+			clearAllEditText(teamEditor);
 			setFocus();
 		}
 	}
@@ -159,7 +157,8 @@ public class TeamAddTeamActivity extends Activity {
 		for (int i = 0; i < viewGroup.getChildCount(); i++) {
 			View view = viewGroup.getChildAt(i);
 			if (view instanceof EditText) {
-				((EditText) view).getText().clear();
+				Editable e = ((EditText) view).getText();
+                if (e != null) e.clear();
 			} else if (view instanceof ViewGroup) {
 				clearAllEditText((ViewGroup) view);
 			}
