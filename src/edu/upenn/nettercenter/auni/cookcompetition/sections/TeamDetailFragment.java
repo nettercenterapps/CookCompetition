@@ -3,6 +3,8 @@ package edu.upenn.nettercenter.auni.cookcompetition.sections;
 import android.app.Fragment;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -28,16 +30,15 @@ import com.googlecode.androidannotations.annotations.OrmLiteDao;
 import com.j256.ormlite.dao.Dao;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.sql.SQLException;
 import java.util.List;
 
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.R;
+import edu.upenn.nettercenter.auni.cookcompetition.Utils;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Team;
 
@@ -52,7 +53,7 @@ public class TeamDetailFragment extends Fragment {
 
 	ListView studentList;
 
-    ImageView photo;
+    ImageView image;
 	
 	/**
 	 * The fragment argument representing the item ID that this fragment
@@ -106,13 +107,18 @@ public class TeamDetailFragment extends Fragment {
 
             try {
                 File source = new File(imageFilePath);
-                File destination = new File(imageDir, mItem.getName());
-                System.out.println("Copying " + source.getAbsolutePath() + " to " +
-                        destination.getAbsolutePath());
-                if (source.exists()) {
-                    copyFile(source, destination);
-                    ImageView image = ((ImageView) getView().findViewById(R.id.photo));
-                    image.setImageURI(Uri.parse(destination.getAbsolutePath()));
+                File destination = new File(imageDir, mItem.getName() + ".jpg");
+                boolean success = true;
+                if (destination.exists()) success = destination.delete();
+                success = success && destination.createNewFile();
+                FileOutputStream destFileOutputStream = new FileOutputStream(destination);
+                if (source.exists() && success) {
+                    Bitmap bitmap = BitmapFactory.decodeFile(imageFilePath);
+                    Bitmap newBitmap = Utils.scaleCenterCrop(bitmap, 450, 450);
+                    newBitmap.compress(Bitmap.CompressFormat.JPEG, 90, destFileOutputStream);
+                    destFileOutputStream.close();
+
+                    image.setImageBitmap(newBitmap);
                 }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -120,14 +126,6 @@ public class TeamDetailFragment extends Fragment {
                 e.printStackTrace();
             }
         }
-    }
-
-    private void copyFile(File source, File destination) throws IOException {
-        FileChannel src = new FileInputStream(source).getChannel();
-        FileChannel dst = new FileOutputStream(destination).getChannel();
-        dst.transferFrom(src, 0, src.size());
-        src.close();
-        dst.close();
     }
 
     private String getPath(Uri uri) {
@@ -156,9 +154,9 @@ public class TeamDetailFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_team_detail,
 				container, false);
 
-        ImageView image = (ImageView) rootView.findViewById(R.id.photo);
+        image = (ImageView) rootView.findViewById(R.id.photo);
         image.setOnClickListener(new ImageView.OnClickListener() {
-        	@Override
+            @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setType("image/*");
@@ -174,7 +172,7 @@ public class TeamDetailFragment extends Fragment {
 			((TextView) rootView.findViewById(R.id.team_name))
 					.setText(mItem.getName());
 
-            File imagePath = new File(imageDir, mItem.getName());
+            File imagePath = new File(imageDir, mItem.getName() + ".jpg");
             if (imagePath.exists()) {
                 //image has same name as team, so if image exists, set it to team
                 image.setImageURI(Uri.parse(imagePath.getAbsolutePath()));
