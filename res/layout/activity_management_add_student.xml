@@ -19,13 +19,13 @@
         <LinearLayout
         android:id="@+id/student_name_editor"
         android:layout_height="wrap_content"
-        android:background="@drawable/panel"
-        android:orientation="horizontal" 
+        android:orientation="horizontal"
         android:layout_width="match_parent">
             <EditText
                 android:id="@+id/student_first_name"
-                android:layout_width="300dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="3"
                 android:ems="10"
                 android:hint="First Name"
                 android:inputType="textPersonName|textCapWords"
@@ -40,8 +40,9 @@
 
            <EditText
                 android:id="@+id/student_last_initial"
-                android:layout_width="300dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:maxLength="1"
                 android:ems="10"
                 android:hint="Last Initial"

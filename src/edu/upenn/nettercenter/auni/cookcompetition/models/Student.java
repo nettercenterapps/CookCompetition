@@ -75,8 +75,8 @@ public class Student {
 		this.isActive = isActive;
 	}
 	
-	public void setLastInital(String li) {
-	    lastInitial = li;
+	public void setLastInitial(String lastInitial) {
+	    this.lastInitial = lastInitial;
 	}
 
 	@Override

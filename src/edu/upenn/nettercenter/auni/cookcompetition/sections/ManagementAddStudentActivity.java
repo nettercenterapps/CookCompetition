@@ -1,7 +1,5 @@
 package edu.upenn.nettercenter.auni.cookcompetition.sections;
 
-import java.sql.SQLException;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -22,6 +20,8 @@ import com.googlecode.androidannotations.annotations.OptionsItem;
 import com.googlecode.androidannotations.annotations.OrmLiteDao;
 import com.googlecode.androidannotations.annotations.ViewById;
 import com.j256.ormlite.dao.Dao;
+
+import java.sql.SQLException;
 
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.R;
@@ -149,7 +149,7 @@ public class ManagementAddStudentActivity extends Activity {
 				student = dao.queryForId(studentId);
 			}
 			student.setFirstName(studentFirstName.getText().toString().trim());
-			student.setLastInital((studentLastInitial.getText().toString().trim()));
+			student.setLastInitial(studentLastInitial.getText().toString().trim());
 			student.setNickname(studentNickname.getText().toString().trim());
 			student.setActive(isActive.isChecked());	
 			dao.createOrUpdate(student);
