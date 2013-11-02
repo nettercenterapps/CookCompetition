@@ -18,7 +18,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView.MultiChoiceModeListener;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -180,12 +181,21 @@ public class TeamDetailFragment extends Fragment {
         }
 
 		studentList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-		studentList.setMultiChoiceModeListener(new MultiChoiceModeListener() {
+        studentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            // Make short tap also be able to start the contextual action bar.
+            // Note that the actual implementation is pretty shallow - this is because that
+            // this onItemClick will only be called in case of [0 selected -> 1 selected].
+            // Once there is at least one item selected, onItemClick event will be handled by
+            // ActionMode in MultiChoiceModeListener.
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                studentList.setItemChecked(i, true);
+            }
+        });
+		studentList.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 			 @Override
 			    public void onItemCheckedStateChanged(ActionMode mode, int position,
 			                                          long id, boolean checked) {
-			        // Here you can do something when items are selected/de-selected,
-			        // such as update the title in the CAB
 			    }
 
 			    @Override
@@ -193,22 +203,21 @@ public class TeamDetailFragment extends Fragment {
 			        // Respond to clicks on the actions in the CAB
 			        switch (item.getItemId()) {
 			            case R.id.menu_select_delete:
-			               // deleteSelectedItems();
 			                try {
 			                	 SparseBooleanArray checked = studentList.getCheckedItemPositions();
 			                     for (int pos = 0; pos < checked.size(); pos++) {
-			                         if(checked.valueAt(pos)) {
-			                        	 Student student = students.get(pos);
-											student.setTeam(null);
-											studentDao.update(student);
+                                     if(checked.valueAt(pos)) {
+                                         Student student = students.get(pos);
+                                         student.setTeam(null);
+                                         studentDao.update(student);
 			                         }
 			                     }
 								reloadStudents();
-								mode.finish(); 
+								mode.finish();
 								return true;
 							} catch (SQLException e) {
 								e.printStackTrace();
-							}			                		           
+							}
 			            default:
 			                return false;
 			        }
@@ -216,7 +225,6 @@ public class TeamDetailFragment extends Fragment {
 
 			    @Override
 			    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-			        // Inflate the menu for the CAB
 			        MenuInflater inflater = mode.getMenuInflater();
 			        inflater.inflate(R.menu.select_menu, menu);
 			        return true;
@@ -224,15 +232,11 @@ public class TeamDetailFragment extends Fragment {
 
 			    @Override
 			    public void onDestroyActionMode(ActionMode mode) {
-			        // Here you can make any necessary updates to the activity when
-			        // the CAB is removed. By default, selected items are deselected/unchecked.
 			    }
 
 			    @Override
 			    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-			        // Here you can perform updates to the CAB due to
-			        // an invalidate() request
-			        return false;
+			        return true;
 			    }
 			});
 		
@@ -244,7 +248,7 @@ public class TeamDetailFragment extends Fragment {
 		try {
 			students = studentDao.queryBuilder().where().eq("team_id", mItem).query();
 			studentList.setAdapter(new ArrayAdapter<Student>(getActivity(),
-					android.R.layout.simple_list_item_activated_1,
+					android.R.layout.simple_list_item_multiple_choice,
 					android.R.id.text1, students));
 		} catch (SQLException e) {
 			e.printStackTrace();
