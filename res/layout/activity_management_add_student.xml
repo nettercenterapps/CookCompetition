@@ -16,19 +16,43 @@
         android:paddingRight="50dp"
         android:paddingTop="25dp" >
 
-        <EditText
-            android:id="@+id/student_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Full Name"
-            android:inputType="textPersonName|textCapWords"
-            android:paddingBottom="15dip"
-            android:paddingTop="15dip" >
-        </EditText>
+        <LinearLayout
+        android:id="@+id/student_name_editor"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_width="match_parent">
+            <EditText
+                android:id="@+id/student_first_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:ems="10"
+                android:hint="First Name"
+                android:inputType="textPersonName|textCapWords"
+                android:paddingBottom="15dip"
+                android:paddingTop="15dip"
+                android:nextFocusDown="@+id/student_last_initial" >
+            <requestFocus />
+            </EditText>
 
-        <!-- TODO: change the color to the theme color -->
-        <!-- http://stackoverflow.com/questions/12171209/change-the-line-color-used-in-listseparatortextviewstyle -->
+            <!-- TODO: change the color to the theme color -->
+            <!-- http://stackoverflow.com/questions/12171209/change-the-line-color-used-in-listseparatortextviewstyle -->
+
+           <EditText
+                android:id="@+id/student_last_initial"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:maxLength="1"
+                android:ems="10"
+                android:hint="Last Initial"
+                android:inputType="textPersonName|textCapWords"
+                android:paddingBottom="15dip"
+                android:paddingTop="15dip"
+                android:nextFocusDown="@+id/student_nickname" >
+
+            </EditText>
+        </LinearLayout>
 
         <TextView
             style="?android:attr/listSeparatorTextViewStyle"
@@ -54,7 +78,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Active?" />
-
     </LinearLayout>
 
 </LinearLayout>

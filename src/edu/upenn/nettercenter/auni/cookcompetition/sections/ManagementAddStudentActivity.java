@@ -1,7 +1,5 @@
 package edu.upenn.nettercenter.auni.cookcompetition.sections;
 
-import java.sql.SQLException;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,6 +21,8 @@ import com.googlecode.androidannotations.annotations.OrmLiteDao;
 import com.googlecode.androidannotations.annotations.ViewById;
 import com.j256.ormlite.dao.Dao;
 
+import java.sql.SQLException;
+
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.R;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
@@ -37,7 +37,10 @@ public class ManagementAddStudentActivity extends Activity {
 	Long studentId;
 
 	@ViewById
-	EditText studentName;
+	EditText studentFirstName;
+	
+	@ViewById
+	EditText studentLastInitial;
 	
 	@ViewById
 	EditText studentNickname;
@@ -81,7 +84,7 @@ public class ManagementAddStudentActivity extends Activity {
 	
 	@AfterViews
 	void setFocus() {
-		studentName.requestFocus();
+		studentFirstName.requestFocus();
 	}
 	
 	@AfterViews
@@ -90,7 +93,8 @@ public class ManagementAddStudentActivity extends Activity {
 
 		try {
 			Student student = dao.queryForId(studentId);
-			studentName.setText(student.getName());
+			studentFirstName.setText(student.getFirstName());
+			studentLastInitial.setText(student.getLastInitial());
 			studentNickname.setText(student.getNickname());
 			isActive.setChecked(student.isActive());
 		} catch (SQLException e) {
@@ -115,7 +119,7 @@ public class ManagementAddStudentActivity extends Activity {
 	}
 	
 	private boolean isNameEmpty() {
-		return studentName.getText().toString().trim().length() > 0;
+		return studentFirstName.getText().toString().trim().length() > 0;
 	}
 
 	@OptionsItem(R.id.menu_add_student_discard)
@@ -144,7 +148,8 @@ public class ManagementAddStudentActivity extends Activity {
 			} else {
 				student = dao.queryForId(studentId);
 			}
-			student.setName(studentName.getText().toString().trim());
+			student.setFirstName(studentFirstName.getText().toString().trim());
+			student.setLastInitial(studentLastInitial.getText().toString().trim());
 			student.setNickname(studentNickname.getText().toString().trim());
 			student.setActive(isActive.isChecked());	
 			dao.createOrUpdate(student);
