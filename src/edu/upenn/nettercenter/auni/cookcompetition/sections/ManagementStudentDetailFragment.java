@@ -1,5 +1,6 @@
 package edu.upenn.nettercenter.auni.cookcompetition.sections;
 
+import java.io.File;
 import java.sql.SQLException;
 
 import com.googlecode.androidannotations.annotations.EFragment;
@@ -8,12 +9,15 @@ import com.j256.ormlite.dao.Dao;
 
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.R;
+import edu.upenn.nettercenter.auni.cookcompetition.Utils;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
@@ -65,6 +69,11 @@ public class ManagementStudentDetailFragment extends Fragment {
                 container, false);
 
         if (mItem != null) {
+            ImageView image = (ImageView) rootView.findViewById(R.id.photo);
+            File imagePath = Utils.getImage(mItem.getTeam());
+            if (imagePath != null && imagePath.exists()) {
+                image.setImageURI(Uri.parse(imagePath.getAbsolutePath()));
+            }
             ((TextView) rootView.findViewById(R.id.student_name))
             .setText(mItem.getName());
             ((TextView) rootView.findViewById(R.id.student_nickname))

@@ -1,10 +1,12 @@
 package edu.upenn.nettercenter.auni.cookcompetition.sections;
 
 import android.app.Fragment;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -16,6 +18,7 @@ import com.googlecode.androidannotations.annotations.OrmLiteDao;
 import com.googlecode.androidannotations.annotations.ViewById;
 import com.j256.ormlite.dao.Dao;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +65,9 @@ public class TodayDetailFragment extends Fragment implements ScoreFieldAdapter.C
     @ViewById(R.id.score_list)
     ListView scoreList;
 
+    @ViewById(R.id.photo)
+    ImageView image;
+    
     /**
 	 * The fragment argument representing the item ID that this fragment
 	 * represents.
@@ -113,6 +119,10 @@ public class TodayDetailFragment extends Fragment implements ScoreFieldAdapter.C
 	void refreshInfo() {
         try {
             if (student != null) {
+                File imagePath = Utils.getImage(student.getTeam());
+                if (imagePath != null && imagePath.exists()) {
+                    image.setImageURI(Uri.parse(imagePath.getAbsolutePath()));
+                }
                 studentName.setText(student.getName());
                 studentNickName.setText(student.getNickname());
                 if (student.getTeam() != null) {

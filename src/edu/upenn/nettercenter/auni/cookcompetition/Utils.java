@@ -3,9 +3,11 @@ package edu.upenn.nettercenter.auni.cookcompetition;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.RectF;
+import android.os.Environment;
 
 import com.j256.ormlite.dao.Dao;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -18,8 +20,13 @@ import java.util.List;
 
 import edu.upenn.nettercenter.auni.cookcompetition.models.Event;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
+import edu.upenn.nettercenter.auni.cookcompetition.models.Team;
 
 public class Utils {
+    
+    private static File imageDir = new File(Environment.getExternalStoragePublicDirectory(
+            Environment.DIRECTORY_PICTURES), "CookCompetition");
+    
     public static void sortStudentsByName(List<Student> students) {
         Collections.sort(students, new Comparator<Student>() {
             @Override
@@ -146,5 +153,15 @@ public class Utils {
         canvas.drawBitmap(source, null, targetRect, null);
 
         return dest;
+    }
+    
+    public static File getImage(Team t) {
+        if (t != null) {
+            File f = new File(imageDir, t.getName() + ".jpg");  
+            if(f.exists()) {
+                return f;
+            }
+        }
+        return null;
     }
 }

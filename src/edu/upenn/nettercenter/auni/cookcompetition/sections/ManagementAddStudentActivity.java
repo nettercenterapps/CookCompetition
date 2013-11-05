@@ -89,7 +89,10 @@ public class ManagementAddStudentActivity extends Activity {
 	
 	@AfterViews
 	void loadStudent() {
-		if (studentId == null) return;
+		if (studentId == null) {
+		    isActive.setChecked(true);
+		    return;
+		}
 
 		try {
 			Student student = dao.queryForId(studentId);
