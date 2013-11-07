@@ -6,6 +6,9 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable
 public class ScoreField {
 
+    public static int FIELD_TYPE_STUDENT = 1;
+    public static int FIELD_TYPE_TEAM = 2;
+
     @DatabaseField(generatedId = true)
     private long id;
 
@@ -18,8 +21,9 @@ public class ScoreField {
     public ScoreField() {
     }
 
-    public ScoreField(String name) {
+    public ScoreField(String name, int type) {
         this.name = name;
+        this.type = type;
     }
 
     public long getId() {

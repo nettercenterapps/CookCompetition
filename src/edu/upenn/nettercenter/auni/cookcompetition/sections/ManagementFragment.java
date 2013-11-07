@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EFragment;
@@ -18,6 +19,7 @@ import java.sql.SQLException;
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.R;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
+import edu.upenn.nettercenter.auni.cookcompetition.models.Team;
 
 /**
  * An fragment for representing the management section of the app. 
@@ -56,22 +58,6 @@ public class ManagementFragment extends Fragment implements ManagementStudentLis
         }
 	}
 
-	/**
-	 * Callback method from {@link ManagementStudentListFragment.Callbacks} indicating
-	 * that the item with the given ID was selected.
-	 */
-	@Override
-	public void onItemSelected(Long id) {
-		selectedStudentId = id;
-		
-		Bundle arguments = new Bundle();
-		arguments.putLong(ManagementStudentDetailFragment_.ARG_ITEM_ID, id);
-		Fragment fragment = new ManagementStudentDetailFragment_();
-		fragment.setArguments(arguments);
-		getChildFragmentManager().beginTransaction()
-				.replace(R.id.detail_container, fragment).commit();
-	}
-	
 	@OptionsItem(R.id.menu_student_add)
 	void addStudent() {
 		Intent intent = new Intent(getActivity(), ManagementAddStudentActivity_.class);
@@ -90,6 +76,17 @@ public class ManagementFragment extends Fragment implements ManagementStudentLis
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		studentListFragment.refreshList();
+        if (data != null) {
+            final long id = data.getLongExtra("id", -1L);
+            if (id != -1) {
+                studentListFragment.setSelectedStudent(new Student(id));
+                new Handler().post(new Runnable() {
+                    public void run() {
+                        onStudentSelected(new Student(id));
+                    }
+                });
+            }
+        }
 	}
 	
 	@OptionsItem(R.id.menu_student_delete)
@@ -112,4 +109,20 @@ public class ManagementFragment extends Fragment implements ManagementStudentLis
 		    .setNegativeButton(android.R.string.cancel, null)
 		    .show();
 	}
+
+    @Override
+    public void onStudentSelected(Student student) {
+        selectedStudentId = student.getId();
+
+        Bundle arguments = new Bundle();
+        arguments.putLong(ManagementStudentDetailFragment_.ARG_ITEM_ID, selectedStudentId);
+        Fragment fragment = new ManagementStudentDetailFragment_();
+        fragment.setArguments(arguments);
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.detail_container, fragment).commit();
+    }
+
+    @Override
+    public void onTeamSelected(Team team) {
+    }
 }

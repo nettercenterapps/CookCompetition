@@ -15,11 +15,12 @@ import java.util.List;
 
 import edu.upenn.nettercenter.auni.cookcompetition.models.Event;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Role;
-import edu.upenn.nettercenter.auni.cookcompetition.models.Score;
 import edu.upenn.nettercenter.auni.cookcompetition.models.ScoreField;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
 import edu.upenn.nettercenter.auni.cookcompetition.models.StudentRecord;
+import edu.upenn.nettercenter.auni.cookcompetition.models.StudentScore;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Team;
+import edu.upenn.nettercenter.auni.cookcompetition.models.TeamScore;
 
 /**
  * Database helper class used to manage the creation and upgrading of your database. This class also usually provides
@@ -48,7 +49,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.createTable(connectionSource, Role.class);
 			TableUtils.createTable(connectionSource, StudentRecord.class);
             TableUtils.createTable(connectionSource, ScoreField.class);
-            TableUtils.createTable(connectionSource, Score.class);
+            TableUtils.createTable(connectionSource, StudentScore.class);
+            TableUtils.createTable(connectionSource, TeamScore.class);
 		} catch (SQLException e) {
 			Log.e(DatabaseHelper.class.getName(), "Can't create database", e);
 			throw new RuntimeException(e);
@@ -70,8 +72,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				);
 
         List<ScoreField> testScoreFields = Arrays.asList(
-                new ScoreField("Score Field 1"),
-                new ScoreField("Score Field 2")
+                new ScoreField("Score Field 1", ScoreField.FIELD_TYPE_STUDENT),
+                new ScoreField("Score Field 2", ScoreField.FIELD_TYPE_STUDENT),
+                new ScoreField("Team Score Field 1", ScoreField.FIELD_TYPE_TEAM)
         );
 
 		for (Student student : testStudents) {

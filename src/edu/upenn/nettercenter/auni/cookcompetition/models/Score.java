@@ -1,16 +1,11 @@
 package edu.upenn.nettercenter.auni.cookcompetition.models;
 
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
 
-@DatabaseTable
-public class Score {
+public abstract class Score {
 
     @DatabaseField(generatedId = true)
     private long id;
-
-    @DatabaseField(foreign = true, canBeNull = false)
-    private Student student;
 
     @DatabaseField(foreign = true, canBeNull = false)
     private Event event;
@@ -27,14 +22,6 @@ public class Score {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public Student getStudent() {
-        return student;
-    }
-
-    public void setStudent(Student student) {
-        this.student = student;
     }
 
     public Event getEvent() {

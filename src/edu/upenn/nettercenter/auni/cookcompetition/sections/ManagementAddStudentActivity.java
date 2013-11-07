@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -109,6 +110,9 @@ public class ManagementAddStudentActivity extends Activity {
 		if (isNameEmpty()) {
 			saveCurrentStudent();
 		}
+        Intent data = new Intent();
+        data.putExtra("id", studentId);
+        setResult(RESULT_OK, data);
 		finish();
 	}
 	

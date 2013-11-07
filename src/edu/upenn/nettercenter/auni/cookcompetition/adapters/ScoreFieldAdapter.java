@@ -28,7 +28,7 @@ public class ScoreFieldAdapter extends BaseAdapter {
     private Context context;
     private Callbacks callbacks;
     private final List<ScoreField> scoreFields;
-    private final List<Score> scores;
+    private final List<? extends Score> scores;
     private LayoutInflater mInflater;
 
     public interface Callbacks {
@@ -40,7 +40,7 @@ public class ScoreFieldAdapter extends BaseAdapter {
 
 
     public ScoreFieldAdapter(Context context, Callbacks callbacks,
-                             List<ScoreField> scoreFields, List<Score> scores) {
+                             List<ScoreField> scoreFields, List<? extends Score> scores) {
         this.context = context;
         this.callbacks = callbacks;
         this.scoreFields = scoreFields;

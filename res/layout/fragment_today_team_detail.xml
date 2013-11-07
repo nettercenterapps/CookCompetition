@@ -1,0 +1,48 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/student_detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:baselineAligned="false"
+    android:divider="?android:attr/dividerHorizontal">
+
+    <LinearLayout
+        android:layout_weight="1"
+        android:id="@+id/today_student_detail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/photo_padding"
+        android:layout_marginLeft="@dimen/photo_padding"
+        android:layout_marginRight="@dimen/photo_padding"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/team_name"
+            style="@style/TeamName"
+            android:textColor="@android:color/holo_blue_light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            style="?android:attr/listSeparatorTextViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:text="Team Performance"/>
+
+        <ListView
+            android:id="@+id/team_performance_list"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:paddingLeft="8dip"
+            android:paddingRight="8dip"/>
+    </LinearLayout>
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        layout="@layout/score_panel"
+        />
+
+</LinearLayout>

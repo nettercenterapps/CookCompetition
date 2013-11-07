@@ -21,6 +21,8 @@ import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.R;
 import edu.upenn.nettercenter.auni.cookcompetition.Utils;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Event;
+import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
+import edu.upenn.nettercenter.auni.cookcompetition.models.Team;
 
 @EFragment(R.layout.fragment_today)
 public class TodayFragment extends Fragment implements ManagementStudentListFragment.Callbacks {
@@ -28,7 +30,7 @@ public class TodayFragment extends Fragment implements ManagementStudentListFrag
     Dao<Event, Long> eventDao = null;
 
     ManagementStudentListFragment listFragment;
-    TodayDetailFragment detailFragment;
+    Fragment detailFragment;
 
     @ViewById
     ViewSwitcher switcher;
@@ -39,7 +41,7 @@ public class TodayFragment extends Fragment implements ManagementStudentListFrag
     @ViewById
     Button createEvent;
 
-    Long selectedItemId;
+//    Long selectedItemId;
 
     @AfterViews
     void determineViewShown() {
@@ -104,14 +106,23 @@ public class TodayFragment extends Fragment implements ManagementStudentListFrag
     }
 
     @Override
-    public void onItemSelected(Long id) {
-        selectedItemId = id;
-
+    public void onStudentSelected(Student student) {
+        long id = student.getId();
         Bundle arguments = new Bundle();
         arguments.putLong(TodayDetailFragment_.ARG_ITEM_ID, id);
         detailFragment = new TodayDetailFragment_();
         detailFragment.setArguments(arguments);
-//        detailFragment.setTo
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.detail_container, detailFragment).commit();
+    }
+
+    @Override
+    public void onTeamSelected(Team team) {
+        long id = team.getId();
+        Bundle arguments = new Bundle();
+        arguments.putLong(TodayTeamDetailFragment_.ARG_ITEM_ID, id);
+        detailFragment = new TodayTeamDetailFragment_();
+        detailFragment.setArguments(arguments);
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, detailFragment).commit();
     }

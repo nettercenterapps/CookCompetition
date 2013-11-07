@@ -29,10 +29,10 @@ import edu.upenn.nettercenter.auni.cookcompetition.Utils;
 import edu.upenn.nettercenter.auni.cookcompetition.adapters.ScoreFieldAdapter;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Event;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Role;
-import edu.upenn.nettercenter.auni.cookcompetition.models.Score;
 import edu.upenn.nettercenter.auni.cookcompetition.models.ScoreField;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
 import edu.upenn.nettercenter.auni.cookcompetition.models.StudentRecord;
+import edu.upenn.nettercenter.auni.cookcompetition.models.StudentScore;
 
 @EFragment(R.layout.fragment_today_detail)
 public class TodayDetailFragment extends Fragment implements ScoreFieldAdapter.Callbacks{
@@ -45,8 +45,8 @@ public class TodayDetailFragment extends Fragment implements ScoreFieldAdapter.C
     Dao<StudentRecord, Long> studentRecordDao = null;
     @OrmLiteDao(helper = DatabaseHelper.class, model = Event.class)
     Dao<Event, Long> eventDao = null;
-    @OrmLiteDao(helper = DatabaseHelper.class, model = Score.class)
-    Dao<Score, Long> scoreDao = null;
+    @OrmLiteDao(helper = DatabaseHelper.class, model = StudentScore.class)
+    Dao<StudentScore, Long> studentScoreDao = null;
     @OrmLiteDao(helper = DatabaseHelper.class, model = ScoreField.class)
     Dao<ScoreField, Long> scoreFieldDao = null;
 
@@ -128,7 +128,7 @@ public class TodayDetailFragment extends Fragment implements ScoreFieldAdapter.C
                 if (student.getTeam() != null) {
                     teamName.setText(student.getTeam().getName());
                 } else {
-                    teamName.setText("No Team");
+                    teamName.setText(getString(R.string.no_team));
                 }
                 ArrayAdapter<Role> adapter;
                 final List<Role> roles = getRoles();
@@ -177,7 +177,7 @@ public class TodayDetailFragment extends Fragment implements ScoreFieldAdapter.C
     @AfterViews
     void refreshScore() {
         try {
-            List<Score> scores = getScores();
+            List<StudentScore> scores = getScores();
             List<ScoreField> scoreFields = getScoreField();
             ListAdapter adapter = new ScoreFieldAdapter(getActivity(), this, scoreFields, scores);
             scoreList.setAdapter(adapter);
@@ -192,15 +192,15 @@ public class TodayDetailFragment extends Fragment implements ScoreFieldAdapter.C
         return roles;
     }
 
-    private List<Score> getScores() throws SQLException {
+    private List<StudentScore> getScores() throws SQLException {
         HashMap<String, Object> args = new HashMap<String, Object>();
         args.put("student_id", student.getId());
         args.put("event_id", todayEvent.getId());
-        return scoreDao.queryForFieldValues(args);
+        return studentScoreDao.queryForFieldValues(args);
     }
 
     private List<ScoreField> getScoreField() throws SQLException {
-        return scoreFieldDao.queryForAll();
+        return scoreFieldDao.queryForEq("type", ScoreField.FIELD_TYPE_STUDENT);
     }
 
     @Override
@@ -210,23 +210,23 @@ public class TodayDetailFragment extends Fragment implements ScoreFieldAdapter.C
             args.put("student_id", student.getId());
             args.put("event_id", todayEvent.getId());
             args.put("scoreField_id", scoreField.getId());
-            List<Score> scores = scoreDao.queryForFieldValues(args);
+            List<StudentScore> scores = studentScoreDao.queryForFieldValues(args);
 
             // N/A before
             if (scores.size() == 0) {
                 // Do nothing in case of N/A -> N/A
                 if (score != 0) {
-                    Score s = new Score();
+                    StudentScore s = new StudentScore();
                     s.setStudent(student);
                     s.setEvent(todayEvent);
                     s.setScoreField(scoreField);
                     s.setScore(score);
-                    scoreDao.create(s);
+                    studentScoreDao.create(s);
                 }
             } else {
-                Score s = scores.get(0);
+                StudentScore s = scores.get(0);
                 s.setScore(score);
-                scoreDao.update(s);
+                studentScoreDao.update(s);
             }
         } catch (SQLException e) {
             e.printStackTrace();

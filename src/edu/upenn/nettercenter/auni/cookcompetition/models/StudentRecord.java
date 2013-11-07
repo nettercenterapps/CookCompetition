@@ -15,7 +15,7 @@ public class StudentRecord {
 	@DatabaseField(foreign = true)
 	private Event event;
 
-	@DatabaseField(canBeNull = true, foreign = true)
+	@DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true)
 	private Role role;
 
 	public Student getStudent() {

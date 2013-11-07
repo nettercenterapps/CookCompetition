@@ -19,6 +19,7 @@ import java.util.Map;
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.Utils;
 import edu.upenn.nettercenter.auni.cookcompetition.adapters.SeparatedListAdapter;
+import edu.upenn.nettercenter.auni.cookcompetition.adapters.TeamMemberAdapter;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Team;
 
@@ -44,10 +45,8 @@ public class ManagementStudentListFragment extends ListFragment {
 	 * selections.
 	 */
 	public interface Callbacks {
-		/**
-		 * Callback for when an item has been selected.
-		 */
-		public void onItemSelected(Long id);
+        public void onStudentSelected(Student student);
+        public void onTeamSelected(Team team);
 	}
 
 	/**
@@ -56,9 +55,13 @@ public class ManagementStudentListFragment extends ListFragment {
 	 */
 	private static Callbacks sDummyCallbacks = new Callbacks() {
 		@Override
-		public void onItemSelected(Long id) {
+		public void onStudentSelected(Student student) {
 		}
-	};
+
+        @Override
+        public void onTeamSelected(Team team) {
+        }
+    };
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -85,10 +88,20 @@ public class ManagementStudentListFragment extends ListFragment {
 	public void onListItemClick(ListView listView, View view, int position,
 			long id) {
 		super.onListItemClick(listView, view, position, id);
-
         if (adapter != null) {
-            long studentId = ((Student) adapter.getItem(position)).getId();
-            mCallbacks.onItemSelected(studentId);
+            Object object = adapter.getItem(position);
+            if (object instanceof Student) {
+                mCallbacks.onStudentSelected((Student) object);
+            } else if (object instanceof String) {
+                try {
+                    List<Team> teamList = teamDao.queryForEq("name", object);
+                    if (!teamList.isEmpty()) {
+                        mCallbacks.onTeamSelected(teamList.get(0));
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 	}
 
@@ -96,12 +109,13 @@ public class ManagementStudentListFragment extends ListFragment {
     public void refreshList() {
 		try {
             List<Student> students = getStudents();
-            adapter = new SeparatedListAdapter(getActivity());
             LinkedHashMap<String,List<Student>> studentMap;
             if (groupByTeam) {
-                studentMap = Utils.partitionByTeam(students);
+                studentMap = Utils.partitionByTeam(getActivity(), students);
+                adapter = new TeamMemberAdapter(getActivity());
             } else {
                 studentMap = Utils.partitionByName(students);
+                adapter = new SeparatedListAdapter(getActivity());
             }
             for (Map.Entry<String, List<Student>> entry : studentMap.entrySet()) {
                 ArrayAdapter<Student> listAdapter = new ArrayAdapter<Student>(getActivity(),
@@ -114,8 +128,17 @@ public class ManagementStudentListFragment extends ListFragment {
 			e.printStackTrace();
 		}
 	}
-	
-	private List<Student> getStudents() throws SQLException {		
+
+    public void setSelectedStudent(Student student) {
+        int position = adapter.getPosition(student);
+        if (position != -1) {
+            System.out.println(position);
+            getListView().setItemChecked(position, true);
+            mCallbacks.onStudentSelected(student);
+        }
+    }
+
+	private List<Student> getStudents() throws SQLException {
 		return dao.queryForAll();
 	}
 }

@@ -1,9 +1,12 @@
 package edu.upenn.nettercenter.auni.cookcompetition;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.os.Environment;
+import android.util.TypedValue;
 
 import com.j256.ormlite.dao.Dao;
 
@@ -61,7 +64,7 @@ public class Utils {
         return result;
     }
 
-    public static LinkedHashMap<String, List<Student>> partitionByTeam(List<Student> students) {
+    public static LinkedHashMap<String, List<Student>> partitionByTeam(Context context, List<Student> students) {
         sortStudentsByName(students);
         Collections.sort(students, new Comparator<Student>() {
             @Override
@@ -94,7 +97,7 @@ public class Utils {
             }
         }
         if (studentsWithoutTeam.size() > 0) {
-            result.put("No Team", studentsWithoutTeam);
+            result.put(context.getString(R.string.no_team), studentsWithoutTeam);
         }
         return result;
     }
@@ -154,7 +157,7 @@ public class Utils {
 
         return dest;
     }
-    
+
     public static File getImage(Team t) {
         if (t != null) {
             File f = new File(imageDir, t.getName() + ".jpg");  
@@ -163,5 +166,12 @@ public class Utils {
             }
         }
         return null;
+    }
+
+    public static int dpToPixel(Context context, int dp) {
+        Resources r = context.getResources();
+        return (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()
+        );
     }
 }

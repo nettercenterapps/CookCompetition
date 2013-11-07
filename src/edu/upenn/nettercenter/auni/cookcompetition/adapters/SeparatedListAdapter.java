@@ -15,11 +15,13 @@ import edu.upenn.nettercenter.auni.cookcompetition.R;
 public class SeparatedListAdapter extends BaseAdapter {
 
     public final Map<String, Adapter> sections = new LinkedHashMap<String, Adapter>();
-    public final ArrayAdapter<String> headers;
+    public ArrayAdapter<String> headers;
     public final static int TYPE_SECTION_HEADER = 0;
+    protected Context context;
 
     public SeparatedListAdapter(Context context) {
-        headers = new ArrayAdapter<String>(context, R.layout.list_header);
+        this.context = context;
+        this.headers = new ArrayAdapter<String>(context, R.layout.list_header);
     }
 
     public void addSection(String section, Adapter adapter) {
@@ -107,4 +109,17 @@ public class SeparatedListAdapter extends BaseAdapter {
         return position;
     }
 
+    public int getPosition(Object object) {
+        int position = 0;
+        for (String section : this.sections.keySet()) {
+            position++;
+            Adapter adapter = sections.get(section);
+            for (int i = 0; i < adapter.getCount(); i++) {
+                Object item = adapter.getItem(i);
+                if (item.equals(object)) return position;
+                position++;
+            }
+        }
+        return -1;
+    }
 }
