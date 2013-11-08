@@ -96,10 +96,14 @@ public class TodayDetailFragment extends Fragment implements ScoreFieldAdapter.C
 
         if (getArguments() != null) {
             try {
+                if (getArguments().containsKey(ARG_EVENT_ID)) {
+                    todayEvent = eventDao.queryForId(getArguments().getLong(ARG_EVENT_ID));
+                } else {
+                    todayEvent = Utils.getTodayEvent(eventDao);
+                }
+
                 if (getArguments().containsKey(ARG_ITEM_ID)) {
                     student = dao.queryForId(getArguments().getLong(ARG_ITEM_ID));
-                    todayEvent = Utils.getTodayEvent(eventDao);
-
                     HashMap<String, Object> args = new HashMap<String, Object>();
                     args.put("student_id", student.getId());
                     args.put("event_id", todayEvent.getId());
@@ -111,11 +115,6 @@ public class TodayDetailFragment extends Fragment implements ScoreFieldAdapter.C
                         studentRecord.setStudent(student);
                         studentRecord.setEvent(todayEvent);
                     }
-                }
-                if (getArguments().containsKey(ARG_EVENT_ID)) {
-                    todayEvent = eventDao.queryForId(getArguments().getLong(ARG_EVENT_ID));
-                } else {
-                    todayEvent = Utils.getTodayEvent(eventDao);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();

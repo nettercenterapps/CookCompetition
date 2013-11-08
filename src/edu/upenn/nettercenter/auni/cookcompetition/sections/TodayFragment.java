@@ -56,7 +56,10 @@ public class TodayFragment extends Fragment implements ManagementStudentListFrag
 
     @AfterViews
     void determineViewShown() {
-        int index = Utils.getTodayEvent(eventDao) == null ? 0 : 1;
+        int index = 0;
+        if (eventId != null || Utils.getTodayEvent(eventDao) != null) {
+            index = 1;
+        }
         switcher.setDisplayedChild(index);
         try {
             System.out.println(eventDao.queryForAll());
