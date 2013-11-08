@@ -41,7 +41,18 @@ public class TodayFragment extends Fragment implements ManagementStudentListFrag
     @ViewById
     Button createEvent;
 
-//    Long selectedItemId;
+    Long eventId;
+
+    public static final String ARG_EVENT_ID = "event_id";
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (getArguments() != null) {
+            eventId = getArguments().getLong(ARG_EVENT_ID);
+        }
+    }
 
     @AfterViews
     void determineViewShown() {
@@ -110,6 +121,9 @@ public class TodayFragment extends Fragment implements ManagementStudentListFrag
         long id = student.getId();
         Bundle arguments = new Bundle();
         arguments.putLong(TodayDetailFragment_.ARG_ITEM_ID, id);
+        if (eventId != null) {
+            arguments.putLong(ARG_EVENT_ID, eventId);
+        }
         detailFragment = new TodayDetailFragment_();
         detailFragment.setArguments(arguments);
         getChildFragmentManager().beginTransaction()
@@ -121,6 +135,9 @@ public class TodayFragment extends Fragment implements ManagementStudentListFrag
         long id = team.getId();
         Bundle arguments = new Bundle();
         arguments.putLong(TodayTeamDetailFragment_.ARG_ITEM_ID, id);
+        if (eventId != null) {
+            arguments.putLong(ARG_EVENT_ID, eventId);
+        }
         detailFragment = new TodayTeamDetailFragment_();
         detailFragment.setArguments(arguments);
         getChildFragmentManager().beginTransaction()

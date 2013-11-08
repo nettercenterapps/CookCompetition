@@ -29,7 +29,9 @@
 		<activity
 			android:name=".sections.TeamAddTeamActivity_">
 		</activity>
-		
+        <activity
+            android:name=".sections.PastEventActivity_">
+        </activity>
 	</application>
 
 </manifest>

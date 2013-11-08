@@ -73,8 +73,9 @@ public class TodayDetailFragment extends Fragment implements ScoreFieldAdapter.C
 	 * represents.
 	 */
 	public static final String ARG_ITEM_ID = "item_id";
+    public static final String ARG_EVENT_ID = "event_id";
 
-	/**
+    /**
 	 * The dummy content this fragment is presenting.
 	 */
 	private Student student;
@@ -93,27 +94,34 @@ public class TodayDetailFragment extends Fragment implements ScoreFieldAdapter.C
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		if (getArguments().containsKey(ARG_ITEM_ID)) {
-			try {
-				student = dao.queryForId(getArguments().getLong(ARG_ITEM_ID));
-                todayEvent = Utils.getTodayEvent(eventDao);
+        if (getArguments() != null) {
+            try {
+                if (getArguments().containsKey(ARG_ITEM_ID)) {
+                    student = dao.queryForId(getArguments().getLong(ARG_ITEM_ID));
+                    todayEvent = Utils.getTodayEvent(eventDao);
 
-                HashMap<String, Object> args = new HashMap<String, Object>();
-                args.put("student_id", student.getId());
-                args.put("event_id", todayEvent.getId());
-                List<StudentRecord> records = studentRecordDao.queryForFieldValues(args);
-                if (records.size() > 0) {
-                    studentRecord = records.get(0);
+                    HashMap<String, Object> args = new HashMap<String, Object>();
+                    args.put("student_id", student.getId());
+                    args.put("event_id", todayEvent.getId());
+                    List<StudentRecord> records = studentRecordDao.queryForFieldValues(args);
+                    if (records.size() > 0) {
+                        studentRecord = records.get(0);
+                    } else {
+                        studentRecord = new StudentRecord();
+                        studentRecord.setStudent(student);
+                        studentRecord.setEvent(todayEvent);
+                    }
+                }
+                if (getArguments().containsKey(ARG_EVENT_ID)) {
+                    todayEvent = eventDao.queryForId(getArguments().getLong(ARG_EVENT_ID));
                 } else {
-                    studentRecord = new StudentRecord();
-                    studentRecord.setStudent(student);
-                    studentRecord.setEvent(todayEvent);
+                    todayEvent = Utils.getTodayEvent(eventDao);
                 }
             } catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+                e.printStackTrace();
+            }
+        }
+    }
 
 	@AfterViews
 	void refreshInfo() {

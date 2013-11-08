@@ -34,6 +34,7 @@ import edu.upenn.nettercenter.auni.cookcompetition.models.TeamScore;
 public class TodayTeamDetailFragment extends Fragment implements ScoreFieldAdapter.Callbacks {
 
     public static final String ARG_ITEM_ID = "item_id";
+    public static final String ARG_EVENT_ID = "event_id";
 
     @OrmLiteDao(helper = DatabaseHelper.class, model = Student.class)
     Dao<Student, Long> studentDao = null;
@@ -67,13 +68,19 @@ public class TodayTeamDetailFragment extends Fragment implements ScoreFieldAdapt
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
-            try {
-                team = teamDao.queryForId(getArguments().getLong(ARG_ITEM_ID));
-                todayEvent = Utils.getTodayEvent(eventDao);
-            } catch (SQLException e) {
-                e.printStackTrace();
+        try {
+            if (getArguments() != null) {
+                if (getArguments().containsKey(ARG_ITEM_ID)) {
+                    team = teamDao.queryForId(getArguments().getLong(ARG_ITEM_ID));
+                }
+                if (getArguments().containsKey(ARG_EVENT_ID)) {
+                    todayEvent = eventDao.queryForId(getArguments().getLong(ARG_EVENT_ID));
+                } else {
+                    todayEvent = Utils.getTodayEvent(eventDao);
+                }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
