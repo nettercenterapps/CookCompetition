@@ -5,18 +5,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
-import com.j256.ormlite.dao.RuntimeExceptionDao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
 
 import edu.upenn.nettercenter.auni.cookcompetition.models.Event;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Role;
 import edu.upenn.nettercenter.auni.cookcompetition.models.ScoreField;
-import edu.upenn.nettercenter.auni.cookcompetition.models.ScoreFieldType;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
 import edu.upenn.nettercenter.auni.cookcompetition.models.StudentRecord;
 import edu.upenn.nettercenter.auni.cookcompetition.models.StudentScore;
@@ -57,40 +53,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			throw new RuntimeException(e);
 		}
 
-		RuntimeExceptionDao<Student, Long> dao = getRuntimeExceptionDao(Student.class);
-		RuntimeExceptionDao<Role, Long> roleDao = getRuntimeExceptionDao(Role.class);
-        RuntimeExceptionDao<ScoreField, Long> scoreFields = getRuntimeExceptionDao(ScoreField.class);
-		List<Student> testStudents = Arrays.asList(
-					new Student("Albert", "G", "Al"),
-					new Student("Jamie", "M", null),
-					new Student("Pam", "H", "Pamcakes"),
-					new Student("David", "E", "Dave"),
-					new Student("Patricia", "B", "Patty")
-				);
-
-		List<Role> testRoles = Arrays.asList(
-				new Role("Cooking - Whole Grain")
-				);
-
-        List<ScoreField> testScoreFields = Arrays.asList(
-                new ScoreField("Score Field 1", ScoreField.FIELD_TYPE_STUDENT, ScoreFieldType.GOLD_SILVER_BRONZE),
-                new ScoreField("Score Field 2", ScoreField.FIELD_TYPE_STUDENT, ScoreFieldType.GOLD_SILVER_BRONZE),
-                new ScoreField("Team Score Field 1", ScoreField.FIELD_TYPE_TEAM, ScoreFieldType.CHECK_BOX)
-        );
-
-		for (Student student : testStudents) {
-			dao.create(student);
-		}
-		for (Role role : testRoles) {
-			roleDao.create(role);
-		}
-        for (ScoreField scoreField : testScoreFields) {
-            scoreFields.create(scoreField);
-        }
-
-
-				
-		Log.i(DatabaseHelper.class.getName(), "created dummy entries in onCreate");
+        PreloadedData.load(this);
 	}
 
 	/**
