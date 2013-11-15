@@ -79,10 +79,9 @@ public class ManagementFragment extends Fragment implements ManagementStudentLis
         if (data != null) {
             final long id = data.getLongExtra("id", -1L);
             if (id != -1) {
-                studentListFragment.setSelectedStudent(new Student(id));
                 new Handler().post(new Runnable() {
                     public void run() {
-                        onStudentSelected(new Student(id));
+                    studentListFragment.setSelectedStudent(new Student(id));
                     }
                 });
             }
