@@ -15,15 +15,23 @@ public class ScoreField {
     @DatabaseField
     private String name;
 
+    // A hack to avoid persisting ScoreFieldType in database
+    @DatabaseField
+    private String scoreFieldTypeName;
+
+    private ScoreFieldType scoreFieldType;
+
     @DatabaseField
     private int type;
 
     public ScoreField() {
     }
 
-    public ScoreField(String name, int type) {
+    public ScoreField(String name, int type, ScoreFieldType scoreFieldType) {
         this.name = name;
         this.type = type;
+        this.scoreFieldType = scoreFieldType;
+        this.scoreFieldTypeName = scoreFieldType.getName();
     }
 
     public long getId() {
@@ -48,5 +56,21 @@ public class ScoreField {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public ScoreFieldType getScoreFieldType() {
+        if (scoreFieldType == null) {
+            if (scoreFieldTypeName.equals(ScoreFieldType.GOLD_SILVER_BRONZE.getName())) {
+                scoreFieldType = ScoreFieldType.GOLD_SILVER_BRONZE;
+            } else if (scoreFieldTypeName.equals(ScoreFieldType.CHECK_BOX.getName())) {
+                scoreFieldType = ScoreFieldType.CHECK_BOX;
+            }
+        }
+        return scoreFieldType;
+    }
+
+    public void setScoreFieldType(ScoreFieldType scoreFieldType) {
+        this.scoreFieldType = scoreFieldType;
+        this.scoreFieldTypeName = scoreFieldType.getName();
     }
 }

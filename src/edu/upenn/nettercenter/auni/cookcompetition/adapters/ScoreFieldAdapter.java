@@ -9,16 +9,19 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.upenn.nettercenter.auni.cookcompetition.R;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Score;
 import edu.upenn.nettercenter.auni.cookcompetition.models.ScoreField;
+import edu.upenn.nettercenter.auni.cookcompetition.models.ScoreFieldValue;
 
 /**
  * @author siyusong
@@ -93,68 +96,83 @@ public class ScoreFieldAdapter extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.score_item, null);
             if (convertView != null) {
                 holder = new ViewHolder();
-                holder.scoreFieldName =
-                        (TextView) convertView.findViewById(R.id.score_field_name);
+                holder.scoreFieldName = (TextView) convertView.findViewById(R.id.score_field_name);
                 holder.scoreCircle = (ImageView) convertView.findViewById(R.id.score_circle);
-                holder.scoreSpinner =
-                        (Spinner) convertView.findViewById(R.id.score_spinner);
+                holder.scoreSpinner = (Spinner) convertView.findViewById(R.id.score_spinner);
+                holder.scoreCheckBox = (CheckBox) convertView.findViewById(R.id.score_checkbox);
                 convertView.setTag(holder);
             }
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        ScoreField scoreField = scoreFields.get(position);
+        final ScoreField scoreField = scoreFields.get(position);
         Score score = getScore(scoreField);
         if (holder != null) {
             holder.scoreFieldName.setText(scoreField.getName());
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
-                    R.layout.score_spinner_item,
-                    Arrays.asList("(N/A)", "Gold", "Silver", "Bronze")
-            );
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            holder.scoreSpinner.setAdapter(adapter);
 
-            GradientDrawable d = (GradientDrawable) holder.scoreCircle.getDrawable();
-            if (score != null) {
-                updateCircleColor(d, score.getScore());
-                holder.scoreSpinner.setSelection(score.getScore());
+            List<String> valueNames = new ArrayList<String>();
+            if (scoreField.getScoreFieldType().getValues().size() > 1) {
+                holder.scoreCheckBox.setVisibility(View.GONE);
+                holder.scoreCircle.setVisibility(View.VISIBLE);
+                holder.scoreSpinner.setVisibility(View.VISIBLE);
+
+                valueNames.add("(N/A)");
+                for (ScoreFieldValue scoreFieldValue : scoreField.getScoreFieldType().getValues()) {
+                    valueNames.add(scoreFieldValue.getCaption());
+                }
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
+                        R.layout.score_spinner_item,
+                        valueNames
+                );
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                holder.scoreSpinner.setAdapter(adapter);
+
+                GradientDrawable d = (GradientDrawable) holder.scoreCircle.getDrawable();
+                if (score != null) {
+                    updateCircleColor(d, scoreField, score.getScore());
+                    holder.scoreSpinner.setSelection(score.getScore());
+                } else {
+                    updateCircleColor(d, scoreField, 0);
+                }
+
+                final ViewHolder finalHolder = holder;
+                holder.scoreSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                        GradientDrawable d = (GradientDrawable) finalHolder.scoreCircle.getDrawable();
+                        updateCircleColor(d, scoreField, i);
+                        callbacks.onScoreFieldChanged((ScoreField) getItem(position), i);
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+                    }
+                });
             } else {
-                clearCircleColor(d);
+                holder.scoreSpinner.setVisibility(View.GONE);
+                holder.scoreCircle.setVisibility(View.GONE);
+                holder.scoreCheckBox.setVisibility(View.VISIBLE);
+                boolean checked = score != null && score.getScore() != 0;
+                holder.scoreCheckBox.setChecked(checked);
+                holder.scoreCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        int score = b ? 1 : 0;
+                        callbacks.onScoreFieldChanged((ScoreField) getItem(position), score);
+                    }
+                });
             }
-
-            final ViewHolder finalHolder = holder;
-            holder.scoreSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    GradientDrawable d = (GradientDrawable) finalHolder.scoreCircle.getDrawable();
-                    updateCircleColor(d, i);
-                    callbacks.onScoreFieldChanged((ScoreField) getItem(position), i);
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-                }
-            });
         }
         return convertView;
     }
 
-    private void clearCircleColor(GradientDrawable d) {
-        d.setColor(Color.TRANSPARENT);
-    }
-
-    private void updateCircleColor(GradientDrawable d, int i) {
-        if (d != null) {
-            if (i == 1) {
-                d.setColor(Color.parseColor("#FFD700"));
-            } else if (i == 2) {
-                d.setColor(Color.parseColor("#C0C0C0"));
-            } else if (i == 3) {
-                d.setColor(Color.parseColor("#B8860B"));
-            } else {
-                clearCircleColor(d);
-            }
+    private void updateCircleColor(GradientDrawable d, ScoreField scoreField, int i) {
+        List<ScoreFieldValue> values = scoreField.getScoreFieldType().getValues();
+        if (i > 0 && values.size() >= i) {
+            d.setColor(values.get(i - 1).getColor());
+        } else {
+            d.setColor(Color.TRANSPARENT);
         }
     }
 
@@ -171,5 +189,6 @@ public class ScoreFieldAdapter extends BaseAdapter {
         private TextView scoreFieldName;
         private ImageView scoreCircle;
         private Spinner scoreSpinner;
+        private CheckBox scoreCheckBox;
     }
 }

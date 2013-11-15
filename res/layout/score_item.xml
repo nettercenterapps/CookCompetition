@@ -23,7 +23,8 @@
     <LinearLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_weight="0.65">
+        android:layout_weight="0.65"
+        android:gravity="right">
         <ImageView
             android:id="@+id/score_circle"
             android:layout_width="wrap_content"
@@ -32,8 +33,16 @@
             android:gravity="center_vertical"
             android:layout_marginRight="5dp"/>
         <Spinner
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/score_spinner"/>
+        <CheckBox
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:id="@+id/score_checkbox"
+            android:visibility="gone"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:layout_gravity="center_vertical" />
     </LinearLayout>
 </LinearLayout>

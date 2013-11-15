@@ -16,6 +16,7 @@ import java.util.List;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Event;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Role;
 import edu.upenn.nettercenter.auni.cookcompetition.models.ScoreField;
+import edu.upenn.nettercenter.auni.cookcompetition.models.ScoreFieldType;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
 import edu.upenn.nettercenter.auni.cookcompetition.models.StudentRecord;
 import edu.upenn.nettercenter.auni.cookcompetition.models.StudentScore;
@@ -72,9 +73,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				);
 
         List<ScoreField> testScoreFields = Arrays.asList(
-                new ScoreField("Score Field 1", ScoreField.FIELD_TYPE_STUDENT),
-                new ScoreField("Score Field 2", ScoreField.FIELD_TYPE_STUDENT),
-                new ScoreField("Team Score Field 1", ScoreField.FIELD_TYPE_TEAM)
+                new ScoreField("Score Field 1", ScoreField.FIELD_TYPE_STUDENT, ScoreFieldType.GOLD_SILVER_BRONZE),
+                new ScoreField("Score Field 2", ScoreField.FIELD_TYPE_STUDENT, ScoreFieldType.GOLD_SILVER_BRONZE),
+                new ScoreField("Team Score Field 1", ScoreField.FIELD_TYPE_TEAM, ScoreFieldType.CHECK_BOX)
         );
 
 		for (Student student : testStudents) {
