@@ -14,6 +14,7 @@ import java.util.Map;
 
 import edu.upenn.nettercenter.auni.cookcompetition.sections.ManagementFragment_;
 import edu.upenn.nettercenter.auni.cookcompetition.sections.PastEventFragment_;
+import edu.upenn.nettercenter.auni.cookcompetition.sections.ScoreboardFragment_;
 import edu.upenn.nettercenter.auni.cookcompetition.sections.TeamFragment_;
 import edu.upenn.nettercenter.auni.cookcompetition.sections.TodayFragment_;
 
@@ -27,6 +28,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
         sections.put("History", PastEventFragment_.class);
 		sections.put("Student", ManagementFragment_.class);
 		sections.put("Team", TeamFragment_.class);
+		sections.put("Scoreboard", ScoreboardFragment_.class);
 	}
 
 	@AfterViews
