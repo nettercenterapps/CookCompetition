@@ -40,7 +40,7 @@ public class PastEventFragment extends Fragment {
     @AfterViews
     void loadData() {
         try {
-            List<Event> events = eventDao.queryForAll();
+            List<Event> events = eventDao.queryBuilder().orderBy("date", false).query();
             Event todayEvent = Utils.getTodayEvent(eventDao);
             pastEvents = new ArrayList<Event>();
             for (Event event : events) {
