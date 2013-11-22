@@ -12,6 +12,7 @@ import com.j256.ormlite.dao.Dao;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -20,6 +21,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 
 import edu.upenn.nettercenter.auni.cookcompetition.models.Event;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
@@ -112,6 +114,10 @@ public class Utils {
         return cal.getTime();
     }
 
+    public static String getShortDate(Date date) {
+    	return new SimpleDateFormat("MM/dd", Locale.ENGLISH).format(date);
+    }
+    
     public static Event getTodayEvent(Dao<Event, Long> eventDao) {
         try {
             Date today = Utils.getDateOfToday();

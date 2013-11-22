@@ -7,10 +7,10 @@ public abstract class Score {
     @DatabaseField(generatedId = true)
     private long id;
 
-    @DatabaseField(foreign = true, canBeNull = false)
+    @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
     private Event event;
 
-    @DatabaseField(foreign = true, canBeNull = false)
+    @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
     private ScoreField scoreField;
 
     @DatabaseField
