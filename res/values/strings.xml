@@ -6,5 +6,6 @@
 	<string name="placeholder_for_extra_information_of_team">Placeholder for extra information of team</string>
     <string name="no_team">No Team</string>
     <string name="role">Role</string>
+    <string name="activity_name_data_backup">Data Backup &amp; Restore</string>
 
 </resources>

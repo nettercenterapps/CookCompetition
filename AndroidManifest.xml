@@ -37,6 +37,11 @@
             android:name=".sections.PastEventActivity_"
             android:screenOrientation="landscape"
             android:configChanges="keyboardHidden|orientation" />
+        <activity
+            android:name=".sections.DataBackupActivity_"
+            android:label="@string/activity_name_data_backup"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation" />
     </application>
 
 </manifest>
