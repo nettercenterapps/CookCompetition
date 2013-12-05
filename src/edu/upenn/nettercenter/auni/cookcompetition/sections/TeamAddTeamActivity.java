@@ -80,7 +80,7 @@ public class TeamAddTeamActivity extends Activity {
 	}
 	
 	@AfterViews
-	void loadStudent() {
+	void loadTeam() {
 		if (itemId == null) return;
 
 		try {
