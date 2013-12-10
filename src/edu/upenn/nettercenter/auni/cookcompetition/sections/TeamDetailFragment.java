@@ -254,4 +254,6 @@ public class TeamDetailFragment extends Fragment {
 			e.printStackTrace();
 		}
 	}
+	
+	
 }

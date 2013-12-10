@@ -1,5 +1,7 @@
 package edu.upenn.nettercenter.auni.cookcompetition.models;
 
+import java.util.List;
+
 import com.j256.ormlite.field.DatabaseField;
 
 public abstract class Score {
@@ -46,5 +48,11 @@ public abstract class Score {
 
     public void setScore(int score) {
         this.score = score;
+    }
+    
+    public int getNumericScore() {
+    	List<ScoreFieldValue> values = getScoreField().getScoreFieldType().getValues();
+    	ScoreFieldValue value = values.get(getScore() - 1);
+    	return value.getValue();
     }
 }

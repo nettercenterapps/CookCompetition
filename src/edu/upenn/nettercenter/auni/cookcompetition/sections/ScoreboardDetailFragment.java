@@ -35,6 +35,7 @@ import edu.upenn.nettercenter.auni.cookcompetition.models.ScoreField;
 import edu.upenn.nettercenter.auni.cookcompetition.models.ScoreFieldValue;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
 import edu.upenn.nettercenter.auni.cookcompetition.models.StudentScore;
+import edu.upenn.nettercenter.auni.cookcompetition.models.ScoreMap;
 
 @EFragment
 public class ScoreboardDetailFragment extends Fragment {
@@ -58,9 +59,9 @@ public class ScoreboardDetailFragment extends Fragment {
      */
     private Student mItem;
 	private List<ScoreField> scoreFields;
-	private Map<ScoreField, Map<Date, Integer>> scoreByFieldMap;
+//	private Map<ScoreField, Map<Date, Integer>> scoreByFieldMap;
 	private int maxScore;
-	private LinkedHashMap<Date, Integer> scoreMap;
+	private ScoreMap scoreMap;
 
 	private boolean showTotal = true;
 	private List<ScoreField> seriesShown = new ArrayList<ScoreField>();
@@ -102,13 +103,9 @@ public class ScoreboardDetailFragment extends Fragment {
         args.put("student_id", mItem.getId());
         List<StudentScore> records;
         try {
-        	scoreFields = scoreFieldDao.queryForEq("type", ScoreField.FIELD_TYPE_STUDENT);
-        	scoreByFieldMap = new LinkedHashMap<ScoreField, Map<Date, Integer>>();
-        	
+        	scoreFields = scoreFieldDao.queryForEq("type", ScoreField.FIELD_TYPE_STUDENT);        	
         	maxScore = 0;        	
         	for (ScoreField scoreField : scoreFields) {
-        		scoreByFieldMap.put(scoreField, new HashMap<Date, Integer>());
-        		
         		List<ScoreFieldValue> values = scoreField.getScoreFieldType().getValues();
         		ScoreFieldValue maxValue = values.get(0);
         		for (ScoreFieldValue scoreFieldValue : values) {
@@ -123,24 +120,8 @@ public class ScoreboardDetailFragment extends Fragment {
             records = studentScoreDao.queryBuilder()
             		 	.where().eq("student_id", mItem.getId())
             		 	.query();
+            scoreMap = new ScoreMap(records, scoreFieldDao);
             
-            scoreMap = new LinkedHashMap<Date, Integer>(); 
-            for (StudentScore studentScore : records) {
-            	List<ScoreFieldValue> values = studentScore.getScoreField().getScoreFieldType().getValues();
-            	ScoreFieldValue value = values.get(studentScore.getScore() - 1);
-            	Date eventDate = studentScore.getEvent().getDate();
-            	if (!scoreMap.containsKey(eventDate)) {
-            		scoreMap.put(eventDate, value.getValue());
-            	} else {
-            		scoreMap.put(eventDate, scoreMap.get(eventDate) + value.getValue());
-            	}
-            	
-            	scoreByFieldMap.get(studentScore.getScoreField()).put(
-            			studentScore.getEvent().getDate(), value.getValue()
-            	);
-			}
-            
-                        	
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -171,7 +152,7 @@ public class ScoreboardDetailFragment extends Fragment {
 		    dataMaps.add(scoreMap);
 		    dataMapNames.add("Total");
 		    for (ScoreField scoreField : seriesShown) {
-		    	dataMaps.add(scoreByFieldMap.get(scoreField));
+		    	dataMaps.add(scoreMap.getScoreMapByField(scoreField));
 		    	dataMapNames.add(scoreField.getName());
 		    }
 		    
