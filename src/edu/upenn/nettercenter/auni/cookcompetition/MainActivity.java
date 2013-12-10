@@ -31,7 +31,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
         sections.put("History", PastEventFragment_.class);
 		sections.put("Student", ManagementFragment_.class);
 		sections.put("Team", TeamFragment_.class);
-		sections.put("Scoreboard", ScoreboardFragment_.class);
+		sections.put("Score", ScoreboardFragment_.class);
 		sections.put("Settings", SettingsFragment_.class);
 	}
 
