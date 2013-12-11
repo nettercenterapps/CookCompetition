@@ -14,9 +14,11 @@ import com.j256.ormlite.dao.Dao;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import edu.upenn.nettercenter.auni.cookcompetition.DBMethods;
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.R;
 import edu.upenn.nettercenter.auni.cookcompetition.Utils;
@@ -57,6 +59,8 @@ public class TodayTeamDetailFragment extends Fragment implements ScoreFieldAdapt
     ListView teamPerformanceList;
     @ViewById(R.id.score_list)
     ListView scoreList;
+    @ViewById(R.id.score_list_total)
+    TextView scoreListTotal;
 
     Team team;
     Event todayEvent;
@@ -121,6 +125,13 @@ public class TodayTeamDetailFragment extends Fragment implements ScoreFieldAdapt
             e.printStackTrace();
         }
     }
+    
+    @AfterViews
+    void updateTotalScore() {
+    	int score = DBMethods.getTotalTeamScoreByEvent(
+    			teamScoreDao, team, todayEvent);
+    	scoreListTotal.setText(Utils.getLongScoreString(0, score));
+    }
 
     private List<TeamScore> getScores() throws SQLException {
         HashMap<String, Object> args = new HashMap<String, Object>();
@@ -161,6 +172,7 @@ public class TodayTeamDetailFragment extends Fragment implements ScoreFieldAdapt
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        updateTotalScore();
     }
 
 }

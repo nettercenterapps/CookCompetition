@@ -20,9 +20,11 @@ import com.j256.ormlite.dao.Dao;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import edu.upenn.nettercenter.auni.cookcompetition.DBMethods;
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.R;
 import edu.upenn.nettercenter.auni.cookcompetition.Utils;
@@ -65,6 +67,9 @@ public class TodayDetailFragment extends Fragment implements ScoreFieldAdapter.C
     @ViewById(R.id.score_list)
     ListView scoreList;
 
+    @ViewById(R.id.score_list_total)
+    TextView scoreListTotal;
+    
     @ViewById(R.id.photo)
     ImageView image;
     
@@ -192,6 +197,13 @@ public class TodayDetailFragment extends Fragment implements ScoreFieldAdapter.C
             e.printStackTrace();
         }
     }
+    
+    @AfterViews
+    void updateTotalScore() {
+    	int score = DBMethods.getTotalStudentScoreByEvent(
+    			studentScoreDao, Arrays.asList(student), todayEvent);
+    	scoreListTotal.setText(Utils.getLongScoreString(0, score));
+    }
 
     private List<Role> getRoles() throws SQLException {
         List<Role> roles = roleDao.queryForAll();
@@ -238,5 +250,6 @@ public class TodayDetailFragment extends Fragment implements ScoreFieldAdapter.C
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
+        updateTotalScore();
+    }    
 }

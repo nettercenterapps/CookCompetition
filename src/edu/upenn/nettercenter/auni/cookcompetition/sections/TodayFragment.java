@@ -15,20 +15,23 @@ import com.j256.ormlite.dao.Dao;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
+import edu.upenn.nettercenter.auni.cookcompetition.DBMethods;
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.R;
 import edu.upenn.nettercenter.auni.cookcompetition.Utils;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Event;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
+import edu.upenn.nettercenter.auni.cookcompetition.models.StudentScore;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Team;
 
 @EFragment(R.layout.fragment_today)
 public class TodayFragment extends Fragment implements ManagementStudentListFragment.Callbacks {
     @OrmLiteDao(helper = DatabaseHelper.class, model = Event.class)
     Dao<Event, Long> eventDao = null;
-
+    
     ManagementStudentListFragment listFragment;
     Fragment detailFragment;
 
@@ -146,4 +149,5 @@ public class TodayFragment extends Fragment implements ManagementStudentListFrag
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, detailFragment).commit();
     }
+    
 }
