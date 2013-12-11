@@ -20,6 +20,8 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -165,6 +167,33 @@ public class TeamDetailFragment extends Fragment {
     }
 
 	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater inflater = getActivity().getMenuInflater();
+		inflater.inflate(R.menu.team_image_context_menu, menu);
+		menu.setHeaderTitle("Team Image");
+	}
+    
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_change:
+			Intent intent = new Intent();
+			intent.setType("image/*");
+			intent.setAction(Intent.ACTION_GET_CONTENT);
+			startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1);
+			return true;
+		case R.id.menu_remove:
+            File file = new File(imageDir, mItem.getName() + ".jpg");
+            file.delete();
+			image.setImageResource(R.drawable.ic_contact_picture_180_holo_light);
+			return true;
+		}
+		return super.onContextItemSelected(item);
+	}
+	
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_team_detail,
@@ -174,13 +203,10 @@ public class TeamDetailFragment extends Fragment {
         image.setOnClickListener(new ImageView.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent,
-                        "Select Picture"), 1);
+            	v.showContextMenu();
             }
         });
+        registerForContextMenu(image);
 
 		studentList = (ListView) rootView.findViewById(R.id.student_list);
 		recentActivitiesList = (ListView) rootView.findViewById(R.id.team_performance_list);
