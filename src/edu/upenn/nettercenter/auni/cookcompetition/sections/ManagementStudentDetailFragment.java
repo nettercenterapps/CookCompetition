@@ -2,35 +2,67 @@ package edu.upenn.nettercenter.auni.cookcompetition.sections;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 
+import android.app.Fragment;
+import android.net.Uri;
+import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EFragment;
 import com.googlecode.androidannotations.annotations.OrmLiteDao;
+import com.googlecode.androidannotations.annotations.ViewById;
 import com.j256.ormlite.dao.Dao;
 
+import edu.upenn.nettercenter.auni.cookcompetition.DBMethods;
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.R;
 import edu.upenn.nettercenter.auni.cookcompetition.Utils;
+import edu.upenn.nettercenter.auni.cookcompetition.adapters.StudentActivityItemAdapter;
+import edu.upenn.nettercenter.auni.cookcompetition.models.Event;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
-import android.net.Uri;
-import android.os.Bundle;
-import android.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+import edu.upenn.nettercenter.auni.cookcompetition.models.StudentRecord;
+import edu.upenn.nettercenter.auni.cookcompetition.models.StudentScore;
 
 /**
  * A fragment representing a single Student detail screen. This fragment is
  * either contained in a {@link StudentListActivity} in two-pane mode (on
  * tablets) or a {@link StudentDetailActivity} on handsets.
  */
-@EFragment
+@EFragment(R.layout.fragment_student_detail)
 public class ManagementStudentDetailFragment extends Fragment {
 
     @OrmLiteDao(helper = DatabaseHelper.class, model = Student.class)
     Dao<Student, Long> dao = null;
+    @OrmLiteDao(helper = DatabaseHelper.class, model = StudentScore.class)
+    Dao<StudentScore, Long> studentScoreDao = null;
+    @OrmLiteDao(helper = DatabaseHelper.class, model = StudentRecord.class)
+    Dao<StudentRecord, Long> studentRecordDao = null;
+    @OrmLiteDao(helper = DatabaseHelper.class, model = Event.class)
+    Dao<Event, Long> eventDao = null;
 
+    
+    @ViewById
+    ImageView photo;    
+    @ViewById
+    TextView studentName;
+    @ViewById
+    TextView studentNickname;
+    @ViewById(R.id.is_active)
+    TextView isActive;
+    @ViewById
+    TextView teamName;
+    @ViewById
+    TextView totalScore;
+    @ViewById
+    TextView achievement;
+    @ViewById
+    ListView activityList;
+    
     /**
      * The fragment argument representing the item ID that this fragment
      * represents.
@@ -62,31 +94,47 @@ public class ManagementStudentDetailFragment extends Fragment {
         }
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_student_detail,
-                container, false);
-
-        if (mItem != null) {
-            ImageView image = (ImageView) rootView.findViewById(R.id.photo);
+    @AfterViews
+    void loadStudent() {
+    	if (mItem != null) {
             File imagePath = Utils.getImage(mItem.getTeam());
             if (imagePath != null && imagePath.exists()) {
-                image.setImageURI(Uri.parse(imagePath.getAbsolutePath()));
+                photo.setImageURI(Uri.parse(imagePath.getAbsolutePath()));
             }
-            ((TextView) rootView.findViewById(R.id.student_name))
-            .setText(mItem.getName());
-            ((TextView) rootView.findViewById(R.id.student_nickname))
-            .setText("\"" + mItem.getNickname() + "\"");
+            
+            studentName.setText(mItem.getName());
+            if (mItem.getNickname() != null) {
+            	studentNickname.setText(mItem.getNickname());
+            }
             if (mItem.isActive()) {
-                ((TextView) rootView.findViewById(R.id.isActive))
-                .setText("Active");                
+                isActive.setText("Active");                
             } else {
-                ((TextView) rootView.findViewById(R.id.isActive))
-                .setText("Inactive");                                
+            	isActive.setText("Inactive");                                
+            }
+            if (mItem.getTeam() != null) {
+                teamName.setText(mItem.getTeam().getName());
+            } else {
+                teamName.setText(getString(R.string.no_team));
+            }
+            int score = DBMethods.getTotalStudentScore(studentScoreDao, Arrays.asList(mItem));
+            totalScore.setText(Utils.getLongScoreString(0, score));
+            achievement.setText("x " + score / Utils.BADGE_POINT_RATIO);
+            
+            try {
+            	List<Event> events = eventDao.queryBuilder().orderBy("date", false).query();
+                List<StudentRecord> studentRecords = studentRecordDao.queryBuilder().where()
+                        .eq("student_id", mItem.getId())
+                        .query();
+                List<StudentScore> studentScores = studentScoreDao.queryBuilder().where()
+                        .eq("student_id", mItem.getId())
+                        .query();
+                StudentActivityItemAdapter adapter =
+                        new StudentActivityItemAdapter(
+                            getActivity(), mItem, events, studentRecords, studentScores);
+                activityList.setAdapter(adapter);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
-
-        return rootView;
     }
 }

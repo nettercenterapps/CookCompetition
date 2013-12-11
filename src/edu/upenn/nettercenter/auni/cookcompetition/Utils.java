@@ -33,6 +33,8 @@ import edu.upenn.nettercenter.auni.cookcompetition.models.Team;
 
 public class Utils {
     
+	public static final int BADGE_POINT_RATIO = 5;
+	
     private static File imageDir = new File(Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_PICTURES), "CookCompetition");
     
