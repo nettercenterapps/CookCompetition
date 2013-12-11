@@ -6,6 +6,8 @@ import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

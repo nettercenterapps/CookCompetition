@@ -35,16 +35,23 @@ public class ScoreboardFragment extends Fragment implements ManagementStudentLis
 	ScoreboardDetailFragment scoreboardDetailFragment;
 	
 	Long selectedStudentId;
+	Long selectedTeamId;
 	
+	List<ScoreField> studentScoreFields;
+	List<ScoreField> teamScoreFields;
 	List<ScoreField> scoreFields;
 	
 	boolean showTotal = true;
-	List<ScoreField> seriesShown = new ArrayList<ScoreField>(); 
+
+	List<ScoreField> studentSeriesShown = new ArrayList<ScoreField>();
+	List<ScoreField> teamSeriesShown = new ArrayList<ScoreField>();
+	List<ScoreField> seriesShown = studentSeriesShown;
 	
 	@AfterViews
 	void loadFragments() {
         if (studentListFragment == null) {
             studentListFragment = new ManagementStudentListFragment_();
+            studentListFragment.setGroupByTeam(true);
             getChildFragmentManager().beginTransaction()
                 .replace(R.id.list_container, studentListFragment)
                 .commit();
@@ -56,14 +63,16 @@ public class ScoreboardFragment extends Fragment implements ManagementStudentLis
 	@AfterViews
 	void loadScoreFields() {
 		try {
-			scoreFields = scoreFieldDao.queryForEq("type", ScoreField.FIELD_TYPE_STUDENT);
+			studentScoreFields = scoreFieldDao.queryForEq("type", ScoreField.FIELD_TYPE_STUDENT);
+			teamScoreFields = new ArrayList<ScoreField>(studentScoreFields); 
+			teamScoreFields.addAll(scoreFieldDao.queryForEq("type", ScoreField.FIELD_TYPE_TEAM));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	@OptionsItem(R.id.menu_series)
-	void chooseSeries() {
+	void chooseSeries() {		
 		final List<ScoreField> selectedSeries = new ArrayList<ScoreField>(seriesShown); 
 		
 		String[] names = new String[scoreFields.size()];
@@ -90,7 +99,8 @@ public class ScoreboardFragment extends Fragment implements ManagementStudentLis
 		 }).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 		     @Override
 		     public void onClick(DialogInterface dialog, int id) {
-		    	 seriesShown = selectedSeries;
+		    	 seriesShown.clear();
+		    	 seriesShown.addAll(selectedSeries);
 		    	 refreshSeriesShown();
 		     }
 		 }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -110,17 +120,32 @@ public class ScoreboardFragment extends Fragment implements ManagementStudentLis
 	@Override
 	public void onStudentSelected(Student student) {
 		selectedStudentId = student.getId();
+		selectedTeamId = null;
+		seriesShown = studentSeriesShown;
+		scoreFields = studentScoreFields;
 		
 		Bundle arguments = new Bundle();
-		arguments.putLong(ScoreboardDetailFragment_.ARG_ITEM_ID, selectedStudentId);
+		arguments.putLong(ScoreboardDetailFragment_.ARG_STUDENT_ID, selectedStudentId);
+		showDetailFragment(arguments);
+	}
+
+	@Override
+	public void onTeamSelected(Team team) {
+		selectedStudentId = null;
+		selectedTeamId = team.getId();
+		seriesShown = teamSeriesShown;
+		scoreFields = teamScoreFields;
+		
+		Bundle arguments = new Bundle();
+		arguments.putLong(ScoreboardDetailFragment_.ARG_TEAM_ID, selectedTeamId);
+		showDetailFragment(arguments);
+	}		
+	
+	private void showDetailFragment(Bundle arguments) {
 		scoreboardDetailFragment = new ScoreboardDetailFragment_();
 		scoreboardDetailFragment.setSeriesShown(seriesShown);
 		scoreboardDetailFragment.setArguments(arguments);
 		getChildFragmentManager().beginTransaction()
 				.replace(R.id.detail_container, scoreboardDetailFragment).commit();
 	}
-
-	@Override
-	public void onTeamSelected(Team team) {		
-	}		
 }

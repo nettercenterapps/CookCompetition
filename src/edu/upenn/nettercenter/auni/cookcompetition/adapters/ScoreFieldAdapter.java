@@ -131,6 +131,7 @@ public class ScoreFieldAdapter extends BaseAdapter {
                 GradientDrawable d = (GradientDrawable) holder.scoreCircle.getDrawable();
                 if (score != null) {
                     updateCircleColor(d, scoreField, score.getScore());
+                    holder.scoreSpinner.setOnItemSelectedListener(null);
                     holder.scoreSpinner.setSelection(score.getScore());
                 } else {
                     updateCircleColor(d, scoreField, 0);
@@ -154,6 +155,7 @@ public class ScoreFieldAdapter extends BaseAdapter {
                 holder.scoreCircle.setVisibility(View.GONE);
                 holder.scoreCheckBox.setVisibility(View.VISIBLE);
                 boolean checked = score != null && score.getScore() != 0;
+                holder.scoreCheckBox.setOnCheckedChangeListener(null);
                 holder.scoreCheckBox.setChecked(checked);
                 holder.scoreCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override

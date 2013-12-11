@@ -1,20 +1,24 @@
 package edu.upenn.nettercenter.auni.cookcompetition.sections;
 
+import java.sql.SQLException;
+
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.SearchView;
+import android.widget.SearchView.OnCloseListener;
+import android.widget.SearchView.OnQueryTextListener;
 
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EFragment;
-import com.googlecode.androidannotations.annotations.OptionsItem;
-import com.googlecode.androidannotations.annotations.OptionsMenu;
 import com.googlecode.androidannotations.annotations.OrmLiteDao;
 import com.j256.ormlite.dao.Dao;
-
-import java.sql.SQLException;
 
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.R;
@@ -36,7 +40,6 @@ import edu.upenn.nettercenter.auni.cookcompetition.models.Team;
  * selections.
  */
 @EFragment(R.layout.twopane)
-@OptionsMenu(R.menu.management)
 public class ManagementFragment extends Fragment implements ManagementStudentListFragment.Callbacks {
 	
 	@OrmLiteDao(helper = DatabaseHelper.class, model = Student.class)
@@ -45,6 +48,51 @@ public class ManagementFragment extends Fragment implements ManagementStudentLis
 	ManagementStudentListFragment studentListFragment;
 	
 	Long selectedStudentId;
+	
+	private SearchView searchView;
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.management, menu);
+		MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+		searchView = (SearchView) searchMenuItem.getActionView();
+		searchView.setOnQueryTextListener(new OnQueryTextListener() {
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				studentListFragment.refreshList(newText);
+				return false;
+			}
+		});
+		searchView.setOnCloseListener(new OnCloseListener() {
+			@Override
+			public boolean onClose() {
+				studentListFragment.refreshList();
+				return false;
+			}
+		});
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.menu_student_add) {
+			addStudent();
+			return true;
+		} else if (item.getItemId() == R.id.menu_student_edit) {
+			editStudent();
+			return true;
+		} else if (item.getItemId() == R.id.menu_student_delete) {
+			deleteStudent();
+			return true;
+		}
+		return false;
+	}
 	
 	@AfterViews
 	void loadFragments() {
@@ -58,13 +106,11 @@ public class ManagementFragment extends Fragment implements ManagementStudentLis
         }
 	}
 
-	@OptionsItem(R.id.menu_student_add)
 	void addStudent() {
 		Intent intent = new Intent(getActivity(), ManagementAddStudentActivity_.class);
 		startActivityForResult(intent, 1);
 	}
 	
-	@OptionsItem(R.id.menu_student_edit)
 	void editStudent() {
 		if (selectedStudentId == null) return;
 		
@@ -88,7 +134,6 @@ public class ManagementFragment extends Fragment implements ManagementStudentLis
         }
 	}
 	
-	@OptionsItem(R.id.menu_student_delete)
 	void deleteStudent() {
 		if (selectedStudentId == null) return; 
 		

@@ -9,31 +9,31 @@ import java.util.Map;
 
 import com.j256.ormlite.dao.Dao;
 
-public class ScoreMap extends LinkedHashMap<Date, Integer> {
+public class ScoreMap extends LinkedHashMap<Event, Integer> {
 	
 	private static final long serialVersionUID = -439128286709023128L;
-	private LinkedHashMap<ScoreField, Map<Date, Integer>> scoreByFieldMap =
-			new LinkedHashMap<ScoreField, Map<Date, Integer>>();
+	private LinkedHashMap<ScoreField, Map<Event, Integer>> scoreByFieldMap =
+			new LinkedHashMap<ScoreField, Map<Event, Integer>>();
 	
 	public ScoreMap(List<? extends Score> scores) throws SQLException {    	
         for (Score score : scores) {
-        	Date eventDate = score.getEvent().getDate();
-        	if (!this.containsKey(eventDate)) {
-        		this.put(eventDate, score.getNumericScore());
+        	Event event = score.getEvent();
+        	if (!this.containsKey(event)) {
+        		this.put(event, score.getNumericScore());
         	} else {
-				this.put(eventDate, this.get(eventDate) + score.getNumericScore());
+				this.put(event, this.get(event) + score.getNumericScore());
         	}
         	
         	if (!scoreByFieldMap.containsKey(score.getScoreField())) {
-        		scoreByFieldMap.put(score.getScoreField(), new HashMap<Date, Integer>());
+        		scoreByFieldMap.put(score.getScoreField(), new HashMap<Event, Integer>());
         	}
         	scoreByFieldMap.get(score.getScoreField()).put(
-        			score.getEvent().getDate(), score.getNumericScore()
+        			score.getEvent(), score.getNumericScore()
         	);
 		}
 	}
 	
-	public Map<Date, Integer> getScoreMapByField(ScoreField scoreField) {
+	public Map<Event, Integer> getScoreMapByField(ScoreField scoreField) {
 		return scoreByFieldMap.get(scoreField);
 	}
 	
@@ -43,5 +43,28 @@ public class ScoreMap extends LinkedHashMap<Date, Integer> {
 			total += score;
 		}
 		return total;
+	}
+	
+	public void combine(ScoreMap scoreMap) {
+		// combine total score
+		for (Map.Entry<Event, Integer> entry : scoreMap.entrySet()) {
+			if (this.containsKey(entry.getKey())) {
+				this.put(entry.getKey(), this.get(entry.getKey()) + entry.getValue());
+			} else {
+				this.put(entry.getKey(), entry.getValue());
+			}
+		}
+		
+		// combine scoreByFieldMap
+		for (Map.Entry<ScoreField, Map<Event, Integer>> entry : scoreMap.scoreByFieldMap.entrySet()) {
+			if (!this.scoreByFieldMap.containsKey(entry.getKey())) {
+				this.scoreByFieldMap.put(entry.getKey(), entry.getValue());
+			}
+		}
+	}
+	
+	@Override
+	public String toString() {
+		return super.toString() + "\nscoreByFieldMap=" + scoreByFieldMap.toString();
 	}
 }

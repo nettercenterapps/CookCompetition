@@ -105,10 +105,18 @@ public class ManagementStudentListFragment extends ListFragment {
         }
 	}
 
-	@SuppressWarnings("ConstantConditions")
-    public void refreshList() {
+	public void refreshList() {
+		refreshList(null);
+	}
+
+	public void refreshList(String constraint) {
 		try {
-            List<Student> students = getStudents();
+			List<Student> students;
+			if (constraint == null) {
+				students = getStudents();
+			} else {
+				students = getStudents(constraint);
+			}
             LinkedHashMap<String,List<Student>> studentMap;
             if (groupByTeam) {
                 studentMap = Utils.partitionByTeam(getActivity(), students);
@@ -140,5 +148,9 @@ public class ManagementStudentListFragment extends ListFragment {
 
 	private List<Student> getStudents() throws SQLException {
 		return dao.queryForAll();
+	}
+	
+	private List<Student> getStudents(String constraint) throws SQLException {
+		return dao.queryBuilder().where().like("firstName", constraint + "%").query();
 	}
 }

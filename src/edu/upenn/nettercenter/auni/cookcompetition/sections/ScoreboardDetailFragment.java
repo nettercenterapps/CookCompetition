@@ -3,9 +3,8 @@ package edu.upenn.nettercenter.auni.cookcompetition.sections;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,33 +30,43 @@ import com.jjoe64.graphview.LineGraphView;
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.R;
 import edu.upenn.nettercenter.auni.cookcompetition.Utils;
+import edu.upenn.nettercenter.auni.cookcompetition.models.Event;
+import edu.upenn.nettercenter.auni.cookcompetition.models.Score;
 import edu.upenn.nettercenter.auni.cookcompetition.models.ScoreField;
 import edu.upenn.nettercenter.auni.cookcompetition.models.ScoreFieldValue;
+import edu.upenn.nettercenter.auni.cookcompetition.models.ScoreMap;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
 import edu.upenn.nettercenter.auni.cookcompetition.models.StudentScore;
-import edu.upenn.nettercenter.auni.cookcompetition.models.ScoreMap;
+import edu.upenn.nettercenter.auni.cookcompetition.models.Team;
+import edu.upenn.nettercenter.auni.cookcompetition.models.TeamScore;
 
 @EFragment
 public class ScoreboardDetailFragment extends Fragment {
 
     @OrmLiteDao(helper = DatabaseHelper.class, model = Student.class)
-    Dao<Student, Long> dao = null;
+    Dao<Student, Long> studentDao = null;
+    @OrmLiteDao(helper = DatabaseHelper.class, model = Team.class)
+    Dao<Team, Long> teamDao = null;
     @OrmLiteDao(helper = DatabaseHelper.class, model = StudentScore.class)
     Dao<StudentScore, Long> studentScoreDao = null;
+    @OrmLiteDao(helper = DatabaseHelper.class, model = TeamScore.class)
+    Dao<TeamScore, Long> teamScoreDao = null;
     @OrmLiteDao(helper = DatabaseHelper.class, model = ScoreField.class)
     Dao<ScoreField, Long> scoreFieldDao = null;
-
+    
     
     /**
      * The fragment argument representing the item ID that this fragment
      * represents.
      */
-    public static final String ARG_ITEM_ID = "item_id";
+    public static final String ARG_STUDENT_ID = "student_id";
+    public static final String ARG_TEAM_ID = "team_id";
 
     /**
      * The dummy content this fragment is presenting.
      */
-    private Student mItem;
+    private Student student;
+    private Team team;
 	private List<ScoreField> scoreFields;
 //	private Map<ScoreField, Map<Date, Integer>> scoreByFieldMap;
 	private int maxScore;
@@ -77,13 +86,16 @@ public class ScoreboardDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
-            try {
-                mItem = dao.queryForId(getArguments().getLong(ARG_ITEM_ID));
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } 
-        }
+        try {
+            if (getArguments().containsKey(ARG_STUDENT_ID)) {
+            	student = studentDao.queryForId(getArguments().getLong(ARG_STUDENT_ID));
+            } else if (getArguments().containsKey(ARG_TEAM_ID)) {
+            	team = teamDao.queryForId(getArguments().getLong(ARG_TEAM_ID));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } 
+        
     }
     
     @Override
@@ -99,32 +111,54 @@ public class ScoreboardDetailFragment extends Fragment {
     }
 
 	private void initScoreData() {
-		HashMap<String, Object> args = new HashMap<String, Object>();
-        args.put("student_id", mItem.getId());
-        List<StudentScore> records;
         try {
-        	scoreFields = scoreFieldDao.queryForEq("type", ScoreField.FIELD_TYPE_STUDENT);        	
-        	maxScore = 0;        	
-        	for (ScoreField scoreField : scoreFields) {
-        		List<ScoreFieldValue> values = scoreField.getScoreFieldType().getValues();
-        		ScoreFieldValue maxValue = values.get(0);
-        		for (ScoreFieldValue scoreFieldValue : values) {
-					if (scoreFieldValue.getValue() > maxValue.getValue()) {
-						maxValue = scoreFieldValue;
-					}
-				} 
-        		maxScore += maxValue.getValue();
-			}        	
+        	List<ScoreField> studentScoreFields = scoreFieldDao.queryForEq("type", ScoreField.FIELD_TYPE_STUDENT);
+        	List<ScoreField> teamScoreFields = scoreFieldDao.queryForEq("type", ScoreField.FIELD_TYPE_TEAM);
+        	int studentMaxScore = countMaxScore(studentScoreFields);
+        	int teamMaxScore = countMaxScore(teamScoreFields);
         	
-        	
-            records = studentScoreDao.queryBuilder()
-            		 	.where().eq("student_id", mItem.getId())
-            		 	.query();
-            scoreMap = new ScoreMap(records);
+        	List<? extends Score> records;
+        	if (student != null) {
+        		records = studentScoreDao.queryBuilder()
+        								 .where().eq("student_id", student.getId())
+        								 .query();
+                scoreMap = new ScoreMap(records);
+                maxScore = studentMaxScore;
+        	} else {
+        		List<Student> students = studentDao.queryForEq("team_id", team.getId());
+        		records = studentScoreDao.queryBuilder()
+						 				 .where().in("student_id", students)
+						 				 .query();
+        		scoreMap = new ScoreMap(records);
+        		
+        		records = teamScoreDao.queryBuilder()
+        							  .where().eq("team_id", team.getId())
+        							  .query();
+        		scoreMap.combine(new ScoreMap(records));
+        		System.out.println(scoreMap);
+        		
+        		maxScore = studentMaxScore * students.size() + teamMaxScore;
+        	}
+            
             
         } catch (SQLException e) {
             e.printStackTrace();
         }
+	}
+
+	private int countMaxScore(List<ScoreField> scoreFields) {
+		int maxScore = 0;        	
+		for (ScoreField scoreField : scoreFields) {
+			List<ScoreFieldValue> values = scoreField.getScoreFieldType().getValues();
+			ScoreFieldValue maxValue = values.get(0);
+			for (ScoreFieldValue scoreFieldValue : values) {
+				if (scoreFieldValue.getValue() > maxValue.getValue()) {
+					maxValue = scoreFieldValue;
+				}
+			} 
+			maxScore += maxValue.getValue();
+		}
+		return maxScore;
 	}
 
 	public void refreshGraph() {
@@ -136,18 +170,23 @@ public class ScoreboardDetailFragment extends Fragment {
 			TextView textView = (TextView) rootView.findViewById(R.id.insufficient_data);
 			textView.setVisibility(View.VISIBLE);
 		} else {
-			ArrayList<Date> dateList = new ArrayList<Date>();
-			dateList.addAll(scoreMap.keySet());
-			Collections.sort(dateList);
+			ArrayList<Event> eventList = new ArrayList<Event>();
+			eventList.addAll(scoreMap.keySet());
+			Collections.sort(eventList, new Comparator<Event>() {
+				@Override
+				public int compare(Event lhs, Event rhs) {
+					return lhs.getDate().compareTo(rhs.getDate());
+				}
+			});
 			
 			ArrayList<String> dateLabelList = new ArrayList<String>();
-		    for (Date date : dateList) {
-		    	dateLabelList.add(Utils.getShortDate(date));
+		    for (Event event : eventList) {
+		    	dateLabelList.add(Utils.getShortDate(event.getDate()));
 		    }
 		    String[] dateLabels = new String[scoreMap.size()];
 		    dateLabelList.toArray(dateLabels);
 			
-		    List<Map<Date, Integer>> dataMaps = new ArrayList<Map<Date, Integer>>();
+		    List<Map<Event, Integer>> dataMaps = new ArrayList<Map<Event, Integer>>();
 		    List<String> dataMapNames = new ArrayList<String>();
 		    dataMaps.add(scoreMap);
 		    dataMapNames.add("Total");
@@ -171,14 +210,14 @@ public class ScoreboardDetailFragment extends Fragment {
 		    
 		    List<GraphViewSeries> seriesList = new ArrayList<GraphViewSeries>();
 		    for (int i = 0; i < dataMaps.size(); i++) {
-		    	Map<Date, Integer> map = dataMaps.get(i);
+		    	Map<Event, Integer> map = dataMaps.get(i);
 		    	String mapName = dataMapNames.get(i);
 		    	
 				int k = 0;
 			    List<GraphViewData> dataList = new ArrayList<GraphViewData>();
-			    for (Date date: dateList) {
-			    	if (map.containsKey(date) && map.get(date) > 0) {
-			    		dataList.add(new GraphViewData(k, map.get(date)));
+			    for (Event event: eventList) {
+			    	if (map.containsKey(event) && map.get(event) > 0) {
+			    		dataList.add(new GraphViewData(k, map.get(event)));
 			    	}
 					k++;
 			    }
@@ -193,9 +232,15 @@ public class ScoreboardDetailFragment extends Fragment {
 			    seriesList.add(series);
 		    }
 
+		    String name;
+		    if (student != null) {
+		    	name = student.getName();
+		    } else {
+		    	name = team.getName();
+		    }
 		    GraphView graphView = new LineGraphView(
 				      getActivity()
-				      , "Scores of " + mItem.getName()
+				      , "Scores of " + name
 				);
 		    
 		    for (GraphViewSeries series : seriesList) {
