@@ -54,21 +54,12 @@ public class ScoreboardDetailFragment extends Fragment {
     @OrmLiteDao(helper = DatabaseHelper.class, model = ScoreField.class)
     Dao<ScoreField, Long> scoreFieldDao = null;
     
-    
-    /**
-     * The fragment argument representing the item ID that this fragment
-     * represents.
-     */
     public static final String ARG_STUDENT_ID = "student_id";
     public static final String ARG_TEAM_ID = "team_id";
 
-    /**
-     * The dummy content this fragment is presenting.
-     */
     private Student student;
     private Team team;
 	private List<ScoreField> scoreFields;
-//	private Map<ScoreField, Map<Date, Integer>> scoreByFieldMap;
 	private int maxScore;
 	private ScoreMap scoreMap;
 
@@ -227,7 +218,7 @@ public class ScoreboardDetailFragment extends Fragment {
 			    int color = seriesColors[i % seriesColors.length];
 			    GraphViewSeries series = new GraphViewSeries(
 			    		mapName,
-			    		new GraphViewSeriesStyle(color, 2),
+			    		new GraphViewSeriesStyle(color, getResources().getDimensionPixelSize(R.dimen.line_thickness)),
 			    		dataArray);
 			    seriesList.add(series);
 		    }

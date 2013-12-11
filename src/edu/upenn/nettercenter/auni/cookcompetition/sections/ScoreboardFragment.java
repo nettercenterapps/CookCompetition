@@ -72,7 +72,9 @@ public class ScoreboardFragment extends Fragment implements ManagementStudentLis
 	}
 	
 	@OptionsItem(R.id.menu_series)
-	void chooseSeries() {		
+	void chooseSeries() {	
+		if (selectedStudentId == null && selectedTeamId == null) return;
+		
 		final List<ScoreField> selectedSeries = new ArrayList<ScoreField>(seriesShown); 
 		
 		String[] names = new String[scoreFields.size()];
