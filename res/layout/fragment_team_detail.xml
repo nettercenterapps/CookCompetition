@@ -4,23 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:baselineAligned="false"
-    android:divider="?android:attr/dividerHorizontal"
-    android:showDividers="middle">
+    android:baselineAligned="false">
 
     <LinearLayout
         android:layout_weight="1" 
         android:id="@+id/student_detail_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="@dimen/photo_padding"
-        android:orientation="vertical" >
+        android:padding="@dimen/photo_padding"
+        android:layout_margin="@dimen/photo_padding"
+		android:orientation="vertical" >
         
 		 <ImageView
         android:id="@+id/photo"
-        android:layout_width="180dp"
-        android:layout_height="180dp"
-        android:padding="@dimen/photo_padding"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_marginBottom="@dimen/photo_padding"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_contact_picture_180_holo_light"
         android:contentDescription="@string/image_of_the_team" />
@@ -31,16 +30,56 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
-            android:text="@string/placeholder_for_extra_information_of_team"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />        
+            style="?android:attr/listSeparatorTextViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:text="Total Score (Team &amp; Individual)" />
+        <TextView
+            android:id="@+id/total_score"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            style="@android:style/TextAppearance.Holo.Medium"
+            android:padding="7dip"
+            android:layout_marginTop="3dip"
+            android:layout_marginBottom="3dip" />     
+        <TextView
+            style="?android:attr/listSeparatorTextViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:text="Recent Activity" />
+		<ListView
+            android:id="@+id/team_performance_list"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:paddingLeft="8dip"
+            android:paddingRight="8dip"/>
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/student_list"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1" >
-    </ListView>
+	    android:layout_height="match_parent"
+	    android:orientation="vertical"
+	    android:background="@drawable/panel"
+	    android:layout_marginTop="0dp"
+	    android:layout_marginBottom="8dp"
+	    android:paddingLeft="24dp"
+	    android:paddingRight="24dp"
+	    android:paddingTop="12dp"
+	    android:paddingBottom="12dp"
+	    android:layout_weight="1">
+		<TextView
+	        style="?android:attr/listSeparatorTextViewStyle"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Team Member" />
+	    <ListView
+	        android:id="@+id/student_list"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:divider="@null">
+	    </ListView>
+    </LinearLayout>
 
 </LinearLayout>

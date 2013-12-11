@@ -1,5 +1,13 @@
 package edu.upenn.nettercenter.auni.cookcompetition.sections;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Fragment;
 import android.content.Intent;
 import android.database.Cursor;
@@ -25,23 +33,20 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EFragment;
 import com.googlecode.androidannotations.annotations.OrmLiteDao;
 import com.j256.ormlite.dao.Dao;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.List;
-
+import edu.upenn.nettercenter.auni.cookcompetition.DBMethods;
 import edu.upenn.nettercenter.auni.cookcompetition.DatabaseHelper;
 import edu.upenn.nettercenter.auni.cookcompetition.R;
 import edu.upenn.nettercenter.auni.cookcompetition.Utils;
+import edu.upenn.nettercenter.auni.cookcompetition.adapters.TeamPerformanceItemAdapter;
+import edu.upenn.nettercenter.auni.cookcompetition.models.Event;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Student;
+import edu.upenn.nettercenter.auni.cookcompetition.models.StudentScore;
 import edu.upenn.nettercenter.auni.cookcompetition.models.Team;
+import edu.upenn.nettercenter.auni.cookcompetition.models.TeamScore;
 
 @EFragment
 public class TeamDetailFragment extends Fragment {
@@ -52,9 +57,19 @@ public class TeamDetailFragment extends Fragment {
 	@OrmLiteDao(helper = DatabaseHelper.class, model = Student.class)
 	Dao<Student, Long> studentDao = null;
 
-	ListView studentList;
+	@OrmLiteDao(helper = DatabaseHelper.class, model = StudentScore.class)
+    Dao<StudentScore, Long> studentScoreDao = null;
+	
+	@OrmLiteDao(helper = DatabaseHelper.class, model = TeamScore.class)
+    Dao<TeamScore, Long> teamScoreDao = null;
+	
+	@OrmLiteDao(helper = DatabaseHelper.class, model = Event.class)
+    Dao<Event, Long> eventDao = null;
 
+	ListView studentList;
     ImageView image;
+    TextView totalScore;
+    ListView recentActivitiesList;
 	
 	/**
 	 * The fragment argument representing the item ID that this fragment
@@ -168,7 +183,8 @@ public class TeamDetailFragment extends Fragment {
         });
 
 		studentList = (ListView) rootView.findViewById(R.id.student_list);
-
+		recentActivitiesList = (ListView) rootView.findViewById(R.id.team_performance_list);
+		
 		if (mItem != null) {
 			((TextView) rootView.findViewById(R.id.team_name))
 					.setText(mItem.getName());
@@ -178,6 +194,9 @@ public class TeamDetailFragment extends Fragment {
                 //image has same name as team, so if image exists, set it to team
                 image.setImageURI(Uri.parse(imagePath.getAbsolutePath()));
             }
+            
+            totalScore = (TextView) rootView.findViewById(R.id.total_score);
+            reloadStudents();
         }
 
 		studentList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -243,17 +262,33 @@ public class TeamDetailFragment extends Fragment {
 		return rootView;
 	}
 	
-	@AfterViews
 	void reloadStudents() {
 		try {
 			students = studentDao.queryBuilder().where().eq("team_id", mItem).query();
 			studentList.setAdapter(new ArrayAdapter<Student>(getActivity(),
 					android.R.layout.simple_list_item_multiple_choice,
 					android.R.id.text1, students));
+            
+            int teamScore = DBMethods.getTotalTeamScore(teamScoreDao, mItem);
+            int studentScore = DBMethods.getTotalStudentScore(studentScoreDao, students);
+            totalScore.setText(Utils.getLongScoreString(teamScore, studentScore));
+            
+            List<Event> events = eventDao.queryBuilder().orderBy("date", false).limit(3L).query();
+            List<Integer> teamScores = new ArrayList<Integer>();
+            List<Integer> studentScores = new ArrayList<Integer>();
+            List<Integer> scores = new ArrayList<Integer>();
+            for (Event event : events) {
+            	int eventTeamScore = DBMethods.getTotalTeamScoreByEvent(teamScoreDao, mItem, event);
+            	int eventStudentScore = DBMethods.getTotalStudentScoreByEvent(studentScoreDao, students, event);
+            	teamScores.add(eventTeamScore);
+            	studentScores.add(eventStudentScore);
+            	scores.add(eventTeamScore + eventStudentScore);
+            }
+            recentActivitiesList.setAdapter(
+            		new TeamPerformanceItemAdapter(getActivity(), events, scores, teamScores, studentScores));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 }

@@ -202,4 +202,13 @@ public class Utils {
             if (destination != null) destination.close();
         }
     }
+    
+    public static String getLongScoreString(int teamScore, int studentScore) {
+    	int score = teamScore + studentScore;
+    	if (Math.abs(score) > 1) {
+    		return score + " pts.";
+    	} else {
+    		return score + " pt.";
+    	}
+    }
 }

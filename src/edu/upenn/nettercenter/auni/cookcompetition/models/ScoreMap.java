@@ -15,15 +15,7 @@ public class ScoreMap extends LinkedHashMap<Date, Integer> {
 	private LinkedHashMap<ScoreField, Map<Date, Integer>> scoreByFieldMap =
 			new LinkedHashMap<ScoreField, Map<Date, Integer>>();
 	
-	public ScoreMap(List<? extends Score> scores, Dao<ScoreField, Long> scoreFieldDao) throws SQLException {
-		List<ScoreField> scoreFields =
-				scoreFieldDao.queryForEq("type", ScoreField.FIELD_TYPE_STUDENT);
-		
-    	
-    	for (ScoreField scoreField : scoreFields) {
-    		scoreByFieldMap.put(scoreField, new HashMap<Date, Integer>());
-    	}
-    	
+	public ScoreMap(List<? extends Score> scores) throws SQLException {    	
         for (Score score : scores) {
         	Date eventDate = score.getEvent().getDate();
         	if (!this.containsKey(eventDate)) {
@@ -32,6 +24,9 @@ public class ScoreMap extends LinkedHashMap<Date, Integer> {
 				this.put(eventDate, this.get(eventDate) + score.getNumericScore());
         	}
         	
+        	if (!scoreByFieldMap.containsKey(score.getScoreField())) {
+        		scoreByFieldMap.put(score.getScoreField(), new HashMap<Date, Integer>());
+        	}
         	scoreByFieldMap.get(score.getScoreField()).put(
         			score.getEvent().getDate(), score.getNumericScore()
         	);

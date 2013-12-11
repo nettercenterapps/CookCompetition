@@ -51,6 +51,8 @@ public abstract class Score {
     }
     
     public int getNumericScore() {
+    	if (getScore() == 0) return 0;
+    	
     	List<ScoreFieldValue> values = getScoreField().getScoreFieldType().getValues();
     	ScoreFieldValue value = values.get(getScore() - 1);
     	return value.getValue();

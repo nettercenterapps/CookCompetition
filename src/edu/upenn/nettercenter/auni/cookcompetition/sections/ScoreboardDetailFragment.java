@@ -120,7 +120,7 @@ public class ScoreboardDetailFragment extends Fragment {
             records = studentScoreDao.queryBuilder()
             		 	.where().eq("student_id", mItem.getId())
             		 	.query();
-            scoreMap = new ScoreMap(records, scoreFieldDao);
+            scoreMap = new ScoreMap(records);
             
         } catch (SQLException e) {
             e.printStackTrace();
