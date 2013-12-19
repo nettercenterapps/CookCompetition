@@ -66,7 +66,7 @@ public class TeamPerformanceItemAdapter extends BaseAdapter {
 
 		if (holder != null) {
 			holder.text1.setText(events.get(position).getName());
-			holder.score.setText(Utils.getLongScoreString(
+			holder.score.setText(Utils.getScoreString(
 					teamScores.get(position), studentScores.get(position)));
 		}
 

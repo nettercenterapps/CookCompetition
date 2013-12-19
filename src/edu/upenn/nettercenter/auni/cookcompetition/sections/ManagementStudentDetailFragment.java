@@ -117,7 +117,7 @@ public class ManagementStudentDetailFragment extends Fragment {
                 teamName.setText(getString(R.string.no_team));
             }
             int score = DBMethods.getTotalStudentScore(studentScoreDao, Arrays.asList(mItem));
-            totalScore.setText(Utils.getLongScoreString(0, score));
+            totalScore.setText(Utils.getPtsString(score));
             achievement.setText("x " + score / Utils.BADGE_POINT_RATIO);
             
             try {

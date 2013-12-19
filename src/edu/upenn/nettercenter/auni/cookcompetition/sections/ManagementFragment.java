@@ -50,6 +50,8 @@ public class ManagementFragment extends Fragment implements ManagementStudentLis
 	Long selectedStudentId;
 	
 	private SearchView searchView;
+
+	ManagementStudentDetailFragment detailFragment;
 	
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -160,10 +162,10 @@ public class ManagementFragment extends Fragment implements ManagementStudentLis
 
         Bundle arguments = new Bundle();
         arguments.putLong(ManagementStudentDetailFragment_.ARG_ITEM_ID, selectedStudentId);
-        Fragment fragment = new ManagementStudentDetailFragment_();
-        fragment.setArguments(arguments);
+        detailFragment = new ManagementStudentDetailFragment_();
+        detailFragment.setArguments(arguments);
         getChildFragmentManager().beginTransaction()
-                .replace(R.id.detail_container, fragment).commit();
+                .replace(R.id.detail_container, detailFragment).commit();
     }
 
     @Override

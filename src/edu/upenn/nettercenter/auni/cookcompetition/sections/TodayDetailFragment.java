@@ -3,6 +3,7 @@ package edu.upenn.nettercenter.auni.cookcompetition.sections;
 import android.app.Fragment;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -83,9 +84,9 @@ public class TodayDetailFragment extends Fragment implements ScoreFieldAdapter.C
     /**
 	 * The dummy content this fragment is presenting.
 	 */
-	private Student student;
-    private StudentRecord studentRecord;
-    private Event todayEvent;
+	Student student;
+    StudentRecord studentRecord;
+    Event todayEvent;
 
 
     /**
@@ -98,7 +99,7 @@ public class TodayDetailFragment extends Fragment implements ScoreFieldAdapter.C
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		
         if (getArguments() != null) {
             try {
                 if (getArguments().containsKey(ARG_EVENT_ID)) {
@@ -202,7 +203,7 @@ public class TodayDetailFragment extends Fragment implements ScoreFieldAdapter.C
     void updateTotalScore() {
     	int score = DBMethods.getTotalStudentScoreByEvent(
     			studentScoreDao, Arrays.asList(student), todayEvent);
-    	scoreListTotal.setText(Utils.getLongScoreString(0, score));
+    	scoreListTotal.setText(Utils.getPtsString(score));
     }
 
     private List<Role> getRoles() throws SQLException {

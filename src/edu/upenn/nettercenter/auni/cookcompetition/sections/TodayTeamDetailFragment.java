@@ -130,7 +130,7 @@ public class TodayTeamDetailFragment extends Fragment implements ScoreFieldAdapt
     void updateTotalScore() {
     	int score = DBMethods.getTotalTeamScoreByEvent(
     			teamScoreDao, team, todayEvent);
-    	scoreListTotal.setText(Utils.getLongScoreString(0, score));
+    	scoreListTotal.setText(Utils.getPtsString(score));
     }
 
     private List<TeamScore> getScores() throws SQLException {

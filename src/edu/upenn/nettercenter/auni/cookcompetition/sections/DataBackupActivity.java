@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.Background;
@@ -106,16 +107,29 @@ public class DataBackupActivity extends Activity {
 	@OptionsItem(R.id.menu_create_db_snapshot)
 	@Background
 	void createSnapshot() {
-		DBSnapshot.createSnapshot(this);
-		loadList();
+		try {
+			DBSnapshot.createSnapshot(this);
+			loadList();
+		} catch (RuntimeException e) {
+			showError(e);
+		}
 	}
 
 	@Background
 	void loadSnapshot(String name) {
-		DBSnapshot.restoreFromSnapshot(this, name);
-		onLoadSnapshotFinished();
+		try {
+			DBSnapshot.restoreFromSnapshot(this, name);
+			onLoadSnapshotFinished();
+		} catch (RuntimeException e) {
+			showError(e);
+		}
 	}
 
+	@UiThread
+	void showError(RuntimeException e) {
+		Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+	}
+	
 	@UiThread
 	void onLoadSnapshotFinished() {
 		new AlertDialog.Builder(this)

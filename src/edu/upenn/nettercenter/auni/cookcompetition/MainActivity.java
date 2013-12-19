@@ -25,14 +25,15 @@ import edu.upenn.nettercenter.auni.cookcompetition.sections.TodayFragment_;
 public class MainActivity extends Activity implements ActionBar.TabListener {
 
 	private static Map<String, Class<?>> sections = new LinkedHashMap<String, Class<?>>();
+	Fragment fragment;
 	
 	static {
-		sections.put("Today", TodayFragment_.class);
-        sections.put("History", PastEventFragment_.class);
-		sections.put("Student", ManagementFragment_.class);
-		sections.put("Team", TeamFragment_.class);
-		sections.put("Score", ScoreboardFragment_.class);
-		sections.put("Settings", SettingsFragment_.class);
+		getSections().put("Today", TodayFragment_.class);
+        getSections().put("History", PastEventFragment_.class);
+		getSections().put("Student", ManagementFragment_.class);
+		getSections().put("Team", TeamFragment_.class);
+		getSections().put("Score", ScoreboardFragment_.class);
+		getSections().put("Settings", SettingsFragment_.class);
 	}
 
 	@Override
@@ -50,7 +51,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-            for (String name : sections.keySet()) {
+            for (String name : getSections().keySet()) {
                 actionBar.addTab(actionBar.newTab()
                         .setText(name)
                         .setTabListener(this)
@@ -62,8 +63,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	@Override
 	public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        String fragmentName = sections.get(tab.getText().toString()).getName();
-        Fragment fragment = getFragmentManager().findFragmentByTag(fragmentName);
+        String fragmentName = getSections().get(tab.getText().toString()).getName();
+        fragment = getFragmentManager().findFragmentByTag(fragmentName);
         if (fragment == null) {
             fragment = Fragment.instantiate(this, fragmentName);
             fragmentTransaction.add(R.id.fragment_container, fragment, fragmentName);
@@ -74,8 +75,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 
 	@Override
 	public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        String fragmentName = sections.get(tab.getText().toString()).getName();
-        Fragment fragment = getFragmentManager().findFragmentByTag(fragmentName);
+        String fragmentName = getSections().get(tab.getText().toString()).getName();
+        fragment = getFragmentManager().findFragmentByTag(fragmentName);
         if (fragment != null) {
             fragmentTransaction.detach(fragment);
         }
@@ -85,4 +86,11 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
 	}
 
+	public Fragment getCurrentFragment() {
+		return fragment;
+	}
+
+	public static Map<String, Class<?>> getSections() {
+		return sections;
+	}
 }

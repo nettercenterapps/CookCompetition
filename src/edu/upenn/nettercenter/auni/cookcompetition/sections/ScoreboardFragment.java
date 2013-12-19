@@ -64,8 +64,7 @@ public class ScoreboardFragment extends Fragment implements ManagementStudentLis
 	void loadScoreFields() {
 		try {
 			studentScoreFields = scoreFieldDao.queryForEq("type", ScoreField.FIELD_TYPE_STUDENT);
-			teamScoreFields = new ArrayList<ScoreField>(studentScoreFields); 
-			teamScoreFields.addAll(scoreFieldDao.queryForEq("type", ScoreField.FIELD_TYPE_TEAM));
+			teamScoreFields = scoreFieldDao.queryForEq("type", ScoreField.FIELD_TYPE_TEAM);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -33,7 +33,7 @@ import edu.upenn.nettercenter.auni.cookcompetition.models.Team;
 
 public class Utils {
     
-	public static final int BADGE_POINT_RATIO = 5;
+	public static final int BADGE_POINT_RATIO = 25;
 	
     private static File imageDir = new File(Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_PICTURES), "CookCompetition");
@@ -205,12 +205,20 @@ public class Utils {
         }
     }
     
-    public static String getLongScoreString(int teamScore, int studentScore) {
-    	int score = teamScore + studentScore;
+    public static String getPtsString(int score) {
     	if (Math.abs(score) > 1) {
     		return score + " pts.";
     	} else {
     		return score + " pt.";
     	}
+    }
+    
+    public static String getScoreString(int teamScore, int studentScore) {
+    	return getPtsString(teamScore + studentScore);
+    }
+    
+    public static String getLongScoreString(int teamScore, int studentScore) {
+    	return getPtsString(teamScore + studentScore) +
+    			" (" + teamScore + " + " + studentScore + ")";
     }
 }

@@ -57,14 +57,14 @@ public class ScoreboardDetailFragment extends Fragment {
     public static final String ARG_STUDENT_ID = "student_id";
     public static final String ARG_TEAM_ID = "team_id";
 
-    private Student student;
-    private Team team;
-	private List<ScoreField> scoreFields;
-	private int maxScore;
+    Student student;
+    Team team;
+	List<ScoreField> scoreFields;
+	int maxScore;
 	private ScoreMap scoreMap;
 
-	private boolean showTotal = true;
-	private List<ScoreField> seriesShown = new ArrayList<ScoreField>();
+	boolean showTotal = true;
+	List<ScoreField> seriesShown = new ArrayList<ScoreField>();
 	
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -116,22 +116,12 @@ public class ScoreboardDetailFragment extends Fragment {
                 scoreMap = new ScoreMap(records);
                 maxScore = studentMaxScore;
         	} else {
-        		List<Student> students = studentDao.queryForEq("team_id", team.getId());
-        		records = studentScoreDao.queryBuilder()
-						 				 .where().in("student_id", students)
+        		records = teamScoreDao.queryBuilder()
+						 				 .where().eq("team_id", team.getId())
 						 				 .query();
         		scoreMap = new ScoreMap(records);
-        		
-        		records = teamScoreDao.queryBuilder()
-        							  .where().eq("team_id", team.getId())
-        							  .query();
-        		scoreMap.combine(new ScoreMap(records));
-        		System.out.println(scoreMap);
-        		
-        		maxScore = studentMaxScore * students.size() + teamMaxScore;
+        		maxScore = teamMaxScore;
         	}
-            
-            
         } catch (SQLException e) {
             e.printStackTrace();
         }

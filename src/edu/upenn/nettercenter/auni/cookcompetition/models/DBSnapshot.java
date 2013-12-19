@@ -149,9 +149,7 @@ public class DBSnapshot {
 		if (!backupDir.exists()) {
 			boolean success = backupDir.mkdirs();
 			if (!success) {
-				Log.e("CookCompetiton", "Failed to create directory: "
-						+ backupDir);
-				return;
+				throw new RuntimeException("Failed to create directory: " + backupDir);
 			}
 		}
 
